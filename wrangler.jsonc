@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shivdev-holidays",
+  "compatibility_date": "2026-09-20",
+  // Single-page app: unknown paths get index.html and React Router renders
+  // the routes and the 404 page. Do NOT add a "/* /index.html 200" rule in
+  // public/_redirects - Cloudflare rejects it as an infinite loop.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
