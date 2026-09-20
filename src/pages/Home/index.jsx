@@ -20,7 +20,7 @@ import './ContactSection.css';
 // here from the former standalone About page (see pages/Home's
 // "about" section below).
 const ABOUT_SERVICES = [
-  { icon: Car, name: 'Local Cab' },
+  { icon: Car, name: 'Cab Services' },
   { icon: Route, name: 'Outstation Travel' },
   { icon: Camera, name: 'Sightseeing' },
   { icon: Plane, name: 'Airport Transfers' },
@@ -211,7 +211,7 @@ export default function Home() {
             Book a Cab from Kanyakumari
           </h2>
           <p className="body-lg contact-content__description">
-            Need a cab for local travel, sightseeing, or an outstation trip? Contact Shivdev
+            Need a cab for sightseeing or an outstation trip? Contact Shivdev
             Holidays for cab bookings from Kanyakumari to destinations across Tamil Nadu and South
             India.
           </p>
