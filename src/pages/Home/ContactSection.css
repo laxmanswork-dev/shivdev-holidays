@@ -125,14 +125,14 @@
    brightening. The smooth transition already comes from the shared
    .btn rule in Button.css. */
 .contact-content__whatsapp-btn {
-  background: #0a6b3d;
-  border-color: #0a6b3d;
+  background: #25d366;
+  border-color: #25d366;
   color: #ffffff;
 }
 
 .contact-content__whatsapp-btn:hover {
-  background: #085530;
-  border-color: #085530;
+  background: #1ea952;
+  border-color: #1ea952;
   color: #ffffff;
 }
 
