@@ -29,11 +29,12 @@ import './HeroVideo.css';
  * asset isn't left competing with lower-priority requests — it
  * should start fetching immediately, not appear late.
  *
- * `webmSrc` (optional) renders as a `<source>` ahead of the mp4 —
- * VP9/WebM is meaningfully smaller than H.264/MP4 at the same visual
- * quality, and every browser that can't decode it (or wasn't given
- * one) just falls straight through to the mp4 `<source>` beneath it,
- * same as any standard `<video>` fallback chain. Two independent
+ * The H.264 mp4 `<source>` comes FIRST because it is the one format
+ * every phone, tablet and desktop browser plays — including Safari /
+ * iOS, where a WebM listed first can be selected and then stall
+ * without ever showing video. `webmSrc` (optional) renders as a
+ * `<source>` after it, as the backup for the rare browser that can't
+ * decode H.264 (same as any standard `<video>` fallback chain). Two independent
  * signals decide whether the video is playable at all: the element's
  * own `error` event (fires once every `<source>` has failed), and a
  * short timeout that catches the case some static hosts answer a
@@ -46,8 +47,8 @@ import './HeroVideo.css';
  * the poster — the poster simply stays up until the video can play.
  *
  * @param {Object} props
- * @param {string} props.src - MP4 source (required, used as the fallback).
- * @param {string} [props.webmSrc] - Optional WebM source, preferred when playable.
+ * @param {string} props.src - H.264 MP4 source (required, tried first).
+ * @param {string} [props.webmSrc] - Optional WebM source, the backup if MP4 can't play.
  * @param {string} [props.poster]
  */
 // navigator.connection.effectiveType values slow enough that a multi-MB
@@ -117,8 +118,8 @@ export function HeroVideo({ src, webmSrc, poster }) {
         preload="auto"
         fetchPriority="high"
       >
-        {webmSrc && <source src={webmSrc} type="video/webm" />}
         <source src={src} type="video/mp4" />
+        {webmSrc && <source src={webmSrc} type="video/webm" />}
       </video>
       <div className="hero-video__scrim" />
     </div>
