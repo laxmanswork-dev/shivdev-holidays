@@ -41,3 +41,16 @@
   background: rgba(5, 15, 25, 0.35);
   pointer-events: none;
 }
+
+/* Phones only (below 768px): the 16:9 clip is cropped to a narrow portrait
+   strip, and with the default centered crop the car (which drives a little
+   right of the middle of the frame, ~54-64% across) ends up pushed toward
+   the right edge. Shifting the crop right moves the video left so the car
+   sits near the center of the screen and stays in view for the whole loop.
+   Also applies to the poster image shown in place of the video. Tablet,
+   laptop and desktop keep the default centered crop above. */
+@media (max-width: 767px) {
+  .hero-video__el {
+    object-position: 64% center;
+  }
+}
