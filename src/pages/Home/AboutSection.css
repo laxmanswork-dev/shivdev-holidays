@@ -4,7 +4,7 @@
   from two full-width parts stacked on the same white background, with
   NO line between them:
     1. "About Shivdev Holidays" — the intro heading + What We Do.
-    2. "How It Works" — the three steps, the closing line + CTA, and
+    2. "How It Works" — the four steps, the closing line + CTA, and
        the vehicle photo below them at full container width.
   Reuses the same navy/blue accent and typography classes as every
   other section — no new colors, no card chrome beyond what the design
@@ -92,14 +92,14 @@
 }
 
 /* ---------- "How It Works" ----------
-   Left-aligned, full-width row of three steps. */
+   Left-aligned, full-width row of four steps (2x2 on tablet, stacked on phones). */
 .about-steps {
   max-width: none;
   /* Full width of the row (its flex-column parent otherwise shrinks it to
-     its content), so the three steps spread across the section. */
+     its content), so the four steps spread across the section. */
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-5) var(--space-6);
   /* Pulls the steps up closer to the "How It Works" label above them
      (the section's own 40px gap was more than they need now that the

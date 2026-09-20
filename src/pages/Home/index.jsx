@@ -42,6 +42,11 @@ const ABOUT_STEPS = [
     name: 'Travel',
     description: 'Confirm your booking.',
   },
+  {
+    number: '04',
+    name: 'Rate',
+    description: 'Rate and review your trip.',
+  },
 ];
 
 /**
