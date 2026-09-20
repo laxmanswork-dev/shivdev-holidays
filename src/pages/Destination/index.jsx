@@ -57,7 +57,9 @@ export default function Destination() {
           ]),
         ]}
       />
-      <Container className="page-placeholder destination-detail">
+      <Container
+        className={`page-placeholder destination-detail${imageMissingFor === destination.slug ? ' destination-detail--no-media' : ''}`}
+      >
         {imageMissingFor !== destination.slug && (
           <div className="destination-detail__media">
             <DestinationImage
@@ -74,28 +76,30 @@ export default function Destination() {
           </div>
         )}
 
-        <p className="eyebrow">{destination.category}</p>
-        <h1 className="heading-xl">{destination.name}</h1>
-        <p className="body-lg">{destination.shortDescription}</p>
-        {destination.recommendedDays && (
-          <p className="label">Recommended stay: {destination.recommendedDays}</p>
-        )}
-
-        {destination.placesToSee.length > 0 && (
-          <div>
-            <h2 className="heading-sm">Places to see</h2>
-            <ul>
-              {destination.placesToSee.map((place) => (
-                <li key={place} className="body">{place}</li>
-              ))}
-            </ul>
+        <div className="destination-detail__content">
+          <p className="eyebrow">{destination.category}</p>
+          <h1 className="heading-xl">{destination.name}</h1>
+          <p className="body-lg">{destination.shortDescription}</p>
+          {destination.recommendedDays && (
+            <p className="label">Recommended stay: {destination.recommendedDays}</p>
+          )}
+  
+          {destination.placesToSee.length > 0 && (
+            <div>
+              <h2 className="heading-sm">Places to see</h2>
+              <ul>
+                {destination.placesToSee.map((place) => (
+                  <li key={place} className="body">{place}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+  
+          <div className="page-placeholder__actions">
+            <Button to={planTripHref} variant="primary" size="sm" icon={ArrowRight} iconPosition="right">
+              Plan Your Trip to {destination.name}
+            </Button>
           </div>
-        )}
-
-        <div className="page-placeholder__actions">
-          <Button to={planTripHref} variant="primary" size="sm" icon={ArrowRight} iconPosition="right">
-            Plan Your Trip to {destination.name}
-          </Button>
         </div>
       </Container>
     </div>

@@ -9,3 +9,111 @@
   width: 100%;
   max-width: 22rem;
 }
+
+/*
+  The page's text is grouped in one column wrapper. Below 768px the
+  wrapper is "display: contents", so it generates no box and on phones
+  its children lay out exactly as they did when they were direct children
+  of the page container. It only becomes a real column at 768px and up.
+*/
+.destination-detail__content {
+  display: contents;
+}
+
+/*
+  Tablet, laptop and desktop (768px and up): photo on the left, all the
+  destination content on the right, both columns top-aligned. Phones
+  (below 768px) are deliberately untouched — every rule that changes the
+  layout lives inside these media queries.
+*/
+@media (min-width: 768px) {
+  .destination-detail.page-placeholder {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--space-6);
+  }
+
+  .destination-detail__media {
+    max-width: none;
+  }
+
+  /* A little softer, larger corner on the big photo — same frame and
+     4:3 crop as every other destination photo, just bigger. */
+  .destination-detail__media .destination-image {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .destination-detail__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  /* A long "Plan Your Trip to <name>" label (e.g. the airport) can be wider
+     than the right column on a tablet. Let it wrap inside the column
+     instead of overflowing; a label that fits looks exactly as before. */
+  .destination-detail__content .page-placeholder__actions {
+    max-width: 100%;
+  }
+
+  .destination-detail__content .btn {
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.25;
+    padding-block: var(--space-2);
+  }
+
+  /* No photo for this place: the content takes a comfortable single
+     column instead of sitting in the narrow right half. */
+  .destination-detail--no-media.page-placeholder {
+    grid-template-columns: minmax(0, 46rem);
+  }
+}
+
+/* Laptop and desktop (1024px+): when the text column is taller than the
+   4:3 photo, the photo frame grows to match it (the image simply covers
+   the taller frame) instead of leaving an empty block underneath. When the
+   text is shorter it stays at its normal 4:3. Tablets keep the plain 4:3
+   photo, where a stretched frame would be too tall and narrow. */
+@media (min-width: 1024px) {
+  .destination-detail__media {
+    align-self: stretch;
+    display: flex;
+  }
+
+  .destination-detail__media .destination-image {
+    flex: 1;
+  }
+}
+
+/* Tablet / small-laptop range only: the right column is ~350–520px wide
+   here, narrower than a long single-word name like "Thiruvananthapuram"
+   at the full heading size. Scale the heading with the width so it fits
+   on one line; desktop (1100px+) keeps the standard heading size. */
+@media (min-width: 768px) and (max-width: 1099px) {
+  .destination-detail__content h1 {
+    font-size: clamp(1.75rem, 3.7vw, 2.5rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .destination-detail__content h1 {
+    overflow-wrap: break-word;
+  }
+}
+
+@media (min-width: 1100px) {
+  .destination-detail.page-placeholder {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    column-gap: var(--space-8);
+  }
+
+  .destination-detail--no-media.page-placeholder {
+    grid-template-columns: minmax(0, 46rem);
+  }
+}
