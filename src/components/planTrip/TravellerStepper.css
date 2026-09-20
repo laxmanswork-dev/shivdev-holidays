@@ -1,0 +1,73 @@
+.traveller-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.traveller-stepper__label {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: var(--weight-medium);
+  color: var(--pt-label);
+}
+
+.traveller-stepper__control {
+  display: inline-flex;
+  align-items: stretch;
+  align-self: flex-start;
+  height: 52px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pt-border);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.traveller-stepper__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  color: var(--color-primary);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.traveller-stepper__button:hover:not(:disabled) {
+  background: var(--color-background-alt);
+}
+
+.traveller-stepper__button:disabled {
+  color: var(--color-border-strong);
+  cursor: not-allowed;
+}
+
+.traveller-stepper__button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.traveller-stepper__value {
+  width: 56px;
+  border: none;
+  border-inline: 1px solid var(--pt-border);
+  text-align: center;
+  background: transparent;
+  font-family: var(--font-body);
+  /* Same size as the other form fields (the date/name inputs are 16px). */
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+  /* Hide the native up/down spinners — the +/- buttons replace them. */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.traveller-stepper__value::-webkit-outer-spin-button,
+.traveller-stepper__value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.traveller-stepper__value:focus-visible {
+  outline: none;
+  background: var(--color-background-alt);
+}

@@ -1,0 +1,246 @@
+/*
+  About — one continuous, scrollable block on the homepage, directly
+  below Plan Your Trip and above Contact (see pages/Home). It is built
+  from two full-width parts stacked on the same white background, with
+  NO line between them:
+    1. "About Shivdev Holidays" — the intro heading + What We Do.
+    2. "How It Works" — the three steps, the closing line + CTA, and
+       the vehicle photo below them at full container width.
+  Reuses the same navy/blue accent and typography classes as every
+  other section — no new colors, no card chrome beyond what the design
+  system already has.
+
+  Both use background="surface" (plain white) rather than the site's
+  ice-blue canvas tones — a deliberate, section-scoped choice. Only the
+  second part carries a divider (see Section's `divider` prop), which
+  separates the whole About block from Contact below. This override
+  lives here, not in Section.css, so no other section is affected.
+
+  Both share the same max-width:none content width, so their left and
+  right edges line up. The padding where they meet is deliberately
+  small on both sides (together one even gap), so the two parts flow
+  as a single page instead of reading as separate sections.
+*/
+
+.about-intro-section {
+  padding-block: var(--space-10) var(--space-6);
+}
+
+.about-how-section {
+  padding-block: var(--space-6) var(--space-10);
+}
+
+/* ---------- Intro + What We Do, side by side ----------
+   Equal-width columns, left-aligned — the intro's own eyebrow/
+   heading on the left, "What We Do" + the services grid on the
+   right. Replaces the default .section__content flex column/measure
+   cap (see Section.css) with a full-width two-column grid. */
+.about-two-col {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-9);
+}
+
+.about-two-col__left,
+.about-two-col__right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* At roughly half the container's width, the heading no longer has
+   room for its old one-line layout — text-wrap: balance picks an
+   even break instead of leaving a short orphan word on its own
+   line. Safe to add: unsupported browsers just get normal wrapping. */
+.about-two-col__left h2 {
+  text-wrap: balance;
+}
+
+/* The section label ("About Shivdev Holidays") is bold (700) — the
+   "What We Do" / "How It Works" sub-labels keep the standard weight. */
+.about-two-col__left .eyebrow {
+  font-weight: var(--weight-bold);
+}
+
+/* ---------- "What We Do" ----------
+   Icon + name only, no box chrome (no border/background/padding) —
+   a compact 2x2 grid, left-aligned within the right column. */
+.about-services {
+  /* auto columns (not 1fr) so the grid hugs its own content width
+     and stays a genuinely compact block instead of stretching each
+     column out to half the right column's full width. */
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: var(--space-3) var(--space-6);
+}
+
+.about-services__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.about-services__item .heading-sm {
+  margin: 0;
+}
+
+.about-services__icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* ---------- "How It Works" ----------
+   Left-aligned, full-width row of three steps. */
+.about-steps {
+  max-width: none;
+  /* Full width of the row (its flex-column parent otherwise shrinks it to
+     its content), so the three steps spread across the section. */
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5) var(--space-6);
+  /* Pulls the steps up closer to the "How It Works" label above them
+     (the section's own 40px gap was more than they need now that the
+     rule above each step is gone). */
+  margin-top: calc(var(--space-4) * -1);
+}
+
+.about-steps__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Slightly darker than the site's usual .body-sm muted gray, for
+   better readability here specifically — scoped to this section only,
+   the shared .body-sm class elsewhere is untouched. Exact requested
+   hex (Tailwind's slate-600) rather than the site's own --color-gray-700
+   token, which is a near-identical but not pixel-exact match. */
+.about-steps__item p {
+  color: #475569;
+}
+
+.about-steps__number {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-lg);
+  font-weight: var(--weight-medium);
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+/* ---------- How It Works, then the vehicle photo ----------
+   Stacked, full container width: the steps/CTA block first, the photo
+   below it. The photo is a wide (16:9) fleet shot — a side column
+   forced it into a near-square crop that showed a single car — so it
+   now spans the whole row and keeps its own proportions. A plain flex
+   column (rather than a grid) so the aspect-ratio photo box always
+   has a definite width to resolve against. */
+.about-how-promo {
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.about-how-promo__left {
+  /* Full row width (the section content centers/starts its children, so
+     it would otherwise shrink to its widest line) — lets the steps grid
+     below span the section. */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-7);
+}
+
+/* The shared .btn--primary already darkens + lifts on hover with a
+   smooth transition (see Button.css) — this adds just the extra
+   resting-shadow lift for this section's CTA specifically, rather
+   than changing the shared button's hover state sitewide. */
+.about-how-promo__left .btn--primary:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.about-how-promo__right {
+  /* Explicit width rather than relying on flex/grid stretch to size
+     this item: its only content is an aspect-ratio box whose own
+     children are all position:absolute, so it contributes no
+     intrinsic size — Chromium can resolve the stretched width to
+     ~0 in that specific case. width: 100% sidesteps it entirely.
+     Column + centered so the grounding shadow (see
+     .about-promo-shadow) stacks directly beneath the photo frame
+     rather than sitting beside it. */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* A soft contact shadow under the photo, so it reads as resting on
+   something instead of floating. A separate element, not a
+   box-shadow on .about-promo-image itself: that frame has
+   overflow:hidden (to clip the photo to its rounded corners), which
+   would clip a shadow trying to extend below it too. */
+.about-promo-shadow {
+  width: 70%;
+  max-width: 260px;
+  height: 20px;
+  margin-top: -10px;
+  background: radial-gradient(ellipse at center, rgba(10, 20, 40, 0.3) 0%, rgba(10, 20, 40, 0) 70%);
+  pointer-events: none;
+}
+
+.about-promo-image {
+  position: relative;
+  width: 100%;
+  /* The source photo's own proportions (1681×936), so nothing is
+     cropped away. */
+  aspect-ratio: 1681 / 936;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.about-promo-image__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-standard);
+}
+
+.about-promo-image__img--visible {
+  opacity: 1;
+}
+
+.about-promo-image__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-border-strong);
+}
+
+@media (max-width: 1024px) {
+  .about-two-col {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .about-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .about-services,
+  .about-steps {
+    grid-template-columns: 1fr;
+  }
+}

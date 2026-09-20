@@ -1,0 +1,447 @@
+.section {
+  position: relative;
+  box-sizing: border-box;
+  padding-block: var(--space-10);
+  /* So an anchored/scrolled-to section never hides under the sticky
+     header — respected by both native fragment jumps and
+     Element.scrollIntoView(). */
+  scroll-margin-top: calc(var(--header-height) + 1px + env(safe-area-inset-top, 0px));
+}
+
+/* ---------- Sitewide scroll-reveal ----------
+   Every section's content fades + rises into view the first time it
+   scrolls into the viewport (see useRevealOnScroll.js, which toggles
+   --revealed via a one-time IntersectionObserver) — a holistic
+   version of the hero's own always-on-load fade below. transition
+   (not a keyframe animation) so it can just sit at rest until the
+   observer fires, and --duration-slow already collapses to 0 under
+   prefers-reduced-motion (see tokens.css), which combined with the
+   hook starting "revealed" in that case means no separate media
+   query is needed here.
+   #home is excluded: its content already animates in unconditionally
+   at mount via hero-fade-in below (it's the one section guaranteed to
+   be in view at load, so a scroll-gated reveal would add nothing) —
+   without this override the two would fight over the same opacity/
+   transform properties before the observer even has a chance to run. */
+.section__content {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--duration-slow) var(--ease-standard),
+    transform var(--duration-slow) var(--ease-standard);
+}
+
+.section__content--revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#home .section__content {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.section--spacing-none {
+  padding-block: 0;
+}
+
+.section--spacing-compact {
+  padding-block: var(--space-8);
+}
+
+.section--spacing-spacious {
+  padding-block: var(--space-12);
+}
+
+/* When `media` is passed (e.g. HeroVideo), it renders as an
+   absolutely-positioned sibling of .container, filling .section
+   (see the `media` prop doc in Section.jsx). Without an explicit
+   z-index, that sibling — being positioned — would paint ABOVE the
+   (position: static) real content by default CSS stacking rules
+   regardless of DOM order. Promote .container above it explicitly. */
+.section--has-media > .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Extends the hero video's own box (only the video layer — the
+   section's own height/margins/document flow are untouched, so
+   nothing else on the page shifts) up behind the sticky header, so
+   the header's transparent glass has real footage to show through
+   instead of sitting over an empty gap above the hero. The header's
+   own z-index already paints above this, so it reads as floating
+   glass over the video, not the video covering the header. */
+#home .hero-video {
+  top: calc(-1 * var(--header-height));
+}
+
+/* Page-canvas tone — ice blue, the site's primary identity. Normal
+   navy type — no inversion needed, this is a light surface. */
+.section--bg-default {
+  background: var(--color-background);
+}
+
+/* The secondary "soft ice" beat in the rhythm — a slightly deeper
+   ice tone, still a CANVAS (not a card), for a bit of movement
+   between consecutive `default` sections. */
+.section--bg-alt {
+  background: var(--color-background-alt);
+}
+
+/* The white "surface" beat — a full white section (content surface),
+   distinct from a white CARD sitting on the ice-blue canvas. */
+.section--bg-surface {
+  background: var(--color-surface);
+}
+
+/* ---------- Non-homepage page background system ----------
+   'ice' / 'ice-alt' are the canvas tones for every page EXCEPT the
+   homepage (which keeps using 'default'/'alt'/'surface' above,
+   untouched). Same light-canvas logic as 'default' — normal navy
+   type, no inversion — just a distinct, slightly more refined ice-
+   blue family reserved for Destinations, destination detail pages,
+   Plan Your Trip and Contact. See tokens.css's
+   --color-page-bg / --color-section-bg. */
+.section--bg-ice {
+  background: var(--color-page-bg);
+}
+
+.section--bg-ice-alt {
+  background: var(--color-section-bg);
+}
+
+/* The "deep ocean" beat — the footer and a dark, closing CTA. This
+   is the ONLY canvas that needs inverse (white-family) type; the
+   ice-blue/white canvases above use navy directly. */
+.section--bg-dark {
+  background: var(--color-background-dark);
+  color: var(--color-text-inverse-body);
+}
+
+.section--bg-dark :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--color-text-inverse);
+}
+
+.section--bg-dark .body,
+.section--bg-dark .body-lg,
+.section--bg-dark .eyebrow {
+  color: var(--color-text-inverse-body);
+}
+
+.section--bg-dark .body-sm,
+.section--bg-dark .label {
+  color: var(--color-text-inverse-muted);
+}
+
+.section--bg-dark .caption {
+  color: var(--color-text-inverse-subtle);
+}
+
+/* Keep the focus ring visible against the Deep Ocean canvas — not
+   just for .btn (see Button.css for its background/text inversion),
+   any focusable element (a plain link, an input) needs this too. */
+.section--bg-dark :focus-visible {
+  outline-color: var(--color-focus-inverse);
+}
+
+/* ---------- Hero-only text color system ----------
+   Explicit exception to the .section--bg-dark rules above, scoped to
+   #home only — its own white-family scale (readability across varied
+   moving footage takes priority over the navy branding the rest of
+   the site uses), distinct from --color-text-inverse* used by every
+   other dark section (footer, Contact). #home's own ID gives these
+   enough specificity to win over the .section--bg-dark rules above
+   without touching them, so Contact/footer are unaffected.
+
+   A small, tight text-shadow (matching the scrim's own navy tint,
+   not a generic black drop-shadow) keeps every line legible against
+   whichever exact video frame happens to be behind it — the
+   brightest sky/cloud moments included — without needing the scrim
+   itself to get any heavier. Purely a text-layer effect: the video's
+   own colors and brightness are completely untouched. */
+#home :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--color-hero-heading);
+  text-shadow: 0 1px 3px rgba(3, 12, 22, 0.4);
+}
+
+#home .body,
+#home .body-lg {
+  color: var(--color-hero-text);
+  text-shadow: 0 1px 3px rgba(3, 12, 22, 0.4);
+}
+
+#home .eyebrow {
+  /* A step up from the shared 13px eyebrow size, hero only. Phones
+     get a smaller bump so the label still fits one line at 375px. */
+  font-size: 0.9375rem;
+  color: var(--color-hero-eyebrow);
+  margin-bottom: 26px;
+  text-shadow: 0 1px 3px rgba(3, 12, 22, 0.4);
+}
+
+@media (max-width: 480px) {
+  #home .eyebrow {
+    font-size: 0.875rem;
+  }
+}
+
+/* A quiet fade-in for the hero's whole text+search group on first
+   paint — eyebrow, heading, description and the trip search bar move
+   as one block, not staggered piece by piece, matching the site's
+   restrained motion language elsewhere (no bounce/pulse). Same
+   duration PromoImage already uses for its own fade. `both` holds the
+   from-state before the animation starts and the to-state after it
+   ends, so nothing flashes at full opacity before the animation
+   kicks in. --duration-slow is zeroed under prefers-reduced-motion
+   (see tokens.css), which collapses this to an instant, motion-free
+   appearance rather than needing a separate media query here. */
+#home .section__content {
+  animation: hero-fade-in var(--duration-slow) var(--ease-standard) both;
+}
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Supporting text stays a short, single measure-capped line block —
+   never a second paragraph's worth of width — so it reads as a quiet
+   caption under the H1 rather than competing body copy. Extra room
+   below (30px → 38px) gives the subtitle → "Plan your trip" step a
+   more deliberate, editorial pause instead of a dense stack. */
+#home .hero-description {
+  max-width: none;
+  margin-bottom: 38px;
+  /* One line: the sentence is ~37em wide, so the size scales with the
+     available width (capped at 1.0625rem — a touch under the previous
+     body-lg size). Phones can't fit it on one line at a readable size,
+     so they keep wrapping (see the media query below). */
+  font-size: clamp(0.8125rem, calc((100vw - 2 * var(--container-gutter)) / 37.5), 1.0625rem);
+  white-space: nowrap;
+}
+
+@media (max-width: 540px) {
+  #home .hero-description {
+    max-width: 35rem;
+    font-size: 0.9375rem;
+    white-space: normal;
+  }
+}
+
+/* Let the browser choose the wrap points across the full sentence
+   (no forced <br>) and nudge it toward more even, less orphan-prone
+   line breaks — same font, same weight, just a kinder wrap. Safe to
+   layer on: unsupported browsers just fall back to normal wrapping.
+   A touch more room below (22px → 26px) separates the headline from
+   the subtitle a little more clearly. A slightly opened line-height
+   (the base --leading-tight is 1.1, tuned for shorter single-line
+   headings) gives this specific two-line wrap a touch more room
+   between its own lines without loosening the letter-spacing or
+   changing the display serif's weight. */
+#home .hero-heading {
+  text-wrap: pretty;
+  line-height: 1.15;
+  margin-bottom: 26px;
+}
+
+/* Two fixed lines: "Dream. Explore. Discover." / "Your Journey
+   Begins Here." Each line is its own nowrap block, and the font size
+   scales with the space actually available (viewport minus the
+   container gutters, ÷ the widest line's width in em) so both lines
+   keep fitting on one line each at every width, instead of wrapping.
+   Capped at 4rem on large screens (slightly under the display size,
+   for a more refined, balanced heading). */
+#home .hero-heading {
+  font-size: clamp(1.25rem, calc((100vw - 2 * var(--container-gutter)) / 13.8), 4rem);
+}
+
+#home .hero-heading__line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* Phones (540px and narrower): the fluid size above shrinks the heading
+   to 20–27px so both lines fit on one line each — which made the H1
+   SMALLER than the section H2s below it (28–30px). Here it holds a
+   fixed 2.125rem (34px), clearly the largest heading, and each line
+   may wrap naturally instead: "Dream. Explore." / "Discover." and
+   "Your Journey" / "Begins Here." (balanced, so no lone-word orphans).
+   Above 540px the lines fit unwrapped and the rule above is unchanged.
+   Tablet and desktop sizes are untouched. */
+@media (max-width: 540px) {
+  #home .hero-heading {
+    font-size: 2.125rem;
+  }
+
+  #home .hero-heading__line {
+    white-space: normal;
+    text-wrap: balance;
+  }
+}
+
+/* "Begins Here." picks up the hero's existing light-blue highlight —
+   the same token the active nav link uses, chosen to stay readable on
+   the dark video. Beats the generic `#home :is(h1…)` color rule. */
+#home .hero-heading .hero-heading__accent {
+  color: var(--color-hero-highlight);
+}
+
+/* Wide enough that the H1 wraps into its intentional two lines
+   ("From Kanyakumari. To" / "Where You Need to Go.") instead of
+   re-wrapping into three or four at this font size — same weight,
+   same size, just enough room. Narrowed from an earlier 56rem so the
+   first line doesn't reach as far across the video, giving the right
+   side more breathing room (the left content column now lands at
+   roughly half the hero's width), while staying wide enough to avoid
+   a three-line (or orphaned-word) wrap. The description
+   (.hero-description, 35rem) and trip search (.hero-trip-search,
+   34rem) keep their own narrower caps below, so this column's width
+   only ever visibly affects the heading.
+
+   Gap is 0 here, not a shared token — each element below carries its
+   own deliberate margin-bottom instead of one uniform flex gap, so
+   the rhythm can step up/down between pairs (eyebrow→H1 tighter than
+   description→"Plan your trip", say) rather than reading as
+   mechanically even spacing. */
+#home .section__content {
+  gap: 0;
+  max-width: 60rem;
+}
+
+/* ==========================================================
+   Viewport-composed major sections — each occupies (roughly)
+   one screen. min-height, never a fixed height: content that
+   genuinely needs more room is always allowed to grow rather
+   than clip.
+   ========================================================== */
+
+.section--viewport-full,
+.section--viewport-hero {
+  display: flex;
+  flex-direction: column;
+  /* Breathing room lives in .section__content instead, since it
+     needs to account for header clearance too. */
+  padding-block: 0;
+}
+
+.section--viewport-full {
+  min-height: 100svh;
+}
+
+/* The very first section: one screen *including* the sticky header
+   that sits above it, so header + hero together equal one viewport
+   instead of one viewport each. */
+.section--viewport-hero {
+  min-height: calc(100svh - var(--header-height));
+}
+
+.section--viewport-full > .container,
+.section--viewport-hero > .container {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Divider ----------
+   A very subtle, full-width hairline marking a page boundary —
+   not a card outline. Kept off small "auto" sections by default;
+   set `divider` explicitly on a major section. */
+.section--divider {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.section--bg-dark.section--divider {
+  border-bottom-color: var(--color-border-inverse);
+}
+
+/* ---------- Internal vertical rhythm ---------- */
+.section__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  /* Editorial measure — see --content-measure. Keeps a heading/copy
+     block from stretching edge-to-edge of the (wider) container on
+     large screens. Not text-align; the block itself stays whichever
+     width its horizontal alignment implies. */
+  max-width: var(--content-measure);
+}
+
+.section--viewport-full > .container > .section__content,
+.section--viewport-hero > .container > .section__content {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* A "full" section follows the hero, so its own top padding must
+   also clear the sticky header on top of ordinary breathing room. */
+.section--viewport-full .section__content {
+  padding-block: calc(var(--header-height) + var(--space-8)) var(--space-9);
+}
+
+/* The hero's min-height already excludes the header — no extra
+   header clearance needed here, just breathing room. */
+.section--viewport-hero .section__content {
+  padding-block: var(--space-8) var(--space-9);
+}
+
+.section__content--align-start {
+  justify-content: flex-start;
+}
+
+.section__content--align-center {
+  justify-content: center;
+}
+
+.section__content--align-end {
+  justify-content: flex-end;
+}
+
+.section__content--align-between {
+  justify-content: space-between;
+}
+
+/* ---------- Horizontal alignment ----------
+   Cross-axis placement of the content block (flex-direction is
+   column, so this is align-items, not justify-content). Independent
+   of the vertical `align` above: a left-aligned section can still be
+   vertically centered, which is the common case. Text itself is
+   never force-centered here — only the block's own position within
+   the (already measure-capped) content area. */
+.section__content--h-left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* .container is a flex column for viewport sections, and
+   .section__content's own box is narrower than it (capped by
+   --content-measure) — align-items only positions ITS CHILDREN, not
+   its own box, so right/center also need an explicit margin to move
+   the whole block, not just the text inside a still-left-stuck box. */
+.section__content--h-right {
+  align-items: flex-end;
+  text-align: right;
+  margin-left: auto;
+}
+
+.section__content--h-center {
+  align-items: center;
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* page-placeholder__actions is a shared row (also used by left-
+   aligned sections, where flex-start is correct) — only recenter it
+   when it's inside a centered section, so a wrapped button row
+   stays centered as a group instead of hugging its own left edge. */
+.section__content--h-center .page-placeholder__actions {
+  justify-content: center;
+}

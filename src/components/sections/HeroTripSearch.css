@@ -1,0 +1,203 @@
+/*
+  The hero's booking entry point — "Where do you want to go?" then
+  "Book Now". Deliberately plain: a solid, restrained input card and
+  a solid primary button, both the same height, aligned on one row on
+  desktop and reading as one connected booking action. No
+  illustration, no decorative shape, no glassmorphism, no
+  transparency at all on the field's own surface (no backdrop-filter
+  blur, no rgba fill) — a fully solid warm-cream card reads reliably
+  over every frame of the hero video, which keeps the whole thing
+  feeling handcrafted and professional rather than templated.
+*/
+
+.hero-trip-search {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* A little more air between "Plan your trip" and the booking form
+     itself (14px → 18px) than between the form's own internal parts. */
+  gap: 18px;
+  width: 100%;
+  max-width: 34rem;
+}
+
+.hero-trip-search__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: var(--weight-medium);
+  color: var(--color-hero-eyebrow);
+  /* Sits directly on the video (unlike the field/button below it,
+     which have their own opaque surface) — the same small text-shadow
+     as the rest of the hero copy keeps it legible against any frame. */
+  text-shadow: 0 1px 3px rgba(3, 12, 22, 0.4);
+}
+
+/* A deliberately close gap — closer than the site's usual --space-4
+   between unrelated controls — so the field and button read as one
+   connected booking action rather than two separate widgets, while
+   still leaving each its own clear edge. */
+.hero-trip-search__bar {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+}
+
+/* ---------- Destination field ----------
+   A plain, fully solid warm-cream card — no transparency, no glass
+   effect — precise thin border, soft low-elevation depth (never a
+   glow) — sharing the same corner radius as Book Now so the two read
+   as one system. A touch more vertical padding (13px → 16px) than a
+   compact form control, so it feels like a comfortable, deliberate
+   input rather than a cramped bar. The site's own --color-warm-white
+   token, not an arbitrary color — text flips to the same navy ink the
+   rest of the site uses on light surfaces. */
+.hero-trip-search__field {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(16, 36, 61, 0.14);
+  background: var(--color-warm-white);
+  box-shadow: 0 8px 20px -12px rgba(3, 12, 22, 0.45);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+/* A clearly visible, but restrained, focus ring — a soft brand-blue
+   halo — so the active state reads as "this field", not just
+   "something changed". */
+.hero-trip-search__field:focus-within {
+  border-color: color-mix(in srgb, var(--color-hero-accent) 55%, transparent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-hero-accent) 45%, transparent),
+    0 8px 20px -12px rgba(3, 12, 22, 0.5);
+}
+
+.hero-trip-search__input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: var(--weight-medium);
+  color: var(--color-navy);
+}
+
+/* The only visible label now — "Enter destination" — so it carries
+   the weight a separate field label used to: bold and dark, not the
+   usual quieter/lighter placeholder treatment. Black at 80% (not a
+   flat #000) so it stays a touch softer against the cream card
+   rather than reading as a harsh pure-black line. */
+.hero-trip-search__input::placeholder {
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 700;
+}
+
+/* The field's own focus-within ring above already gives keyboard
+   users a clear, visible focus indicator — an inner outline on the
+   input itself would just double it up. */
+.hero-trip-search__input:focus-visible {
+  outline: none;
+}
+
+/* ---------- Book Now ----------
+   A real premium CTA: solid Shivdev blue, the same corner radius as
+   the field next to it, bold white type, a restrained lift + a hint
+   of brightness on hover — a small, deliberate depth/color change,
+   not a flashy effect. */
+.hero-trip-search__submit {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-hero-accent) 85%, black 15%);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 6px 16px -8px rgba(3, 12, 22, 0.45);
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    filter var(--duration-fast) var(--ease-standard);
+}
+
+.hero-trip-search__submit:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -8px rgba(3, 12, 22, 0.5);
+}
+
+.hero-trip-search__submit:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+  box-shadow: 0 4px 10px -6px rgba(3, 12, 22, 0.4);
+}
+
+.hero-trip-search__submit:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.hero-trip-search__error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  color: #ffe3b0;
+}
+
+/* Positioned under the destination field. Text colors (result names,
+   meta, "Popular destinations" label) are inherited from the shared
+   .destination-search__panel — already dark navy on light — only the
+   background is tinted to the site's own ice-blue canvas. */
+.hero-trip-search__dropdown.destination-search__panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  width: auto;
+  background: var(--color-background);
+}
+
+@media (max-width: 640px) {
+  .hero-trip-search {
+    max-width: none;
+  }
+
+  .hero-trip-search__bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .hero-trip-search__submit {
+    padding: 15px 30px;
+  }
+
+  .hero-trip-search__dropdown.destination-search__panel {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}

@@ -1,0 +1,161 @@
+/*
+  Destinations — a long-form editorial catalogue page, not another
+  one-viewport-per-section hero composition. Reuses Section for
+  background rhythm/spacing but overrides its content measure cap
+  (--content-measure, meant for a single column of prose) wherever a
+  card grid needs the container's full width.
+*/
+
+.destinations-page__wide {
+  max-width: none;
+}
+
+.destinations-page__region-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.destinations-page__lede {
+  max-width: 40rem;
+  color: var(--color-text-muted);
+}
+
+#destinations-intro .category-filter {
+  margin-top: var(--space-5);
+}
+
+/* Typography only: the page's "Destinations" label (the h1) steps up
+   from the 13px eyebrow size, keeping its position and blue color. Set
+   in the display serif (Fraunces) like every other page's main heading. */
+#destinations-intro .eyebrow {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+/* Category filter buttons: solid brand-blue buttons with white bold
+   text — one shared compact height, padding and radius, evenly spaced. Hover
+   deepens the blue slightly; the active category is the deepest blue
+   plus a white underline bar, so it reads as selected even without
+   hovering. Sizes step down on phones so the row still wraps cleanly. */
+#destinations-intro .category-filter {
+  gap: var(--space-3) 16px;
+}
+
+#destinations-intro .category-filter__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding-inline: 12px;
+  border-radius: 6px;
+  background: var(--color-primary);
+  font-size: 0.9375rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-white);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+#destinations-intro .category-filter__chip:hover {
+  background: color-mix(in srgb, var(--color-primary) 85%, black 15%);
+  color: var(--color-white);
+}
+
+#destinations-intro .category-filter__chip--active,
+#destinations-intro .category-filter__chip--active:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-white);
+}
+
+/* The existing scale-in underline, recolored white and tucked inside
+   the button (over the blue) instead of hanging below it. */
+#destinations-intro .category-filter__chip::after {
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  background: var(--color-white);
+}
+
+/* The intro only holds the label + tabs, so the shared prose measure
+   (46rem) isn't needed — at the larger size the seven tabs need a bit
+   more than that to stay on one row on desktop. */
+#destinations-intro .section__content {
+  max-width: none;
+}
+
+/* The tabs → first region heading gap was the intro's 48px bottom
+   padding stacked on the region section's own 48px top padding (96px
+   total). Only the intro's bottom padding is trimmed, so the spacing
+   between the region sections themselves is unchanged. */
+#destinations-intro {
+  padding-bottom: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  #destinations-intro .eyebrow {
+    font-size: 1.125rem;
+  }
+
+  #destinations-intro .category-filter {
+    gap: 10px;
+  }
+
+  #destinations-intro .category-filter__chip {
+    min-height: 44px;
+    padding-inline: 10px;
+    font-size: 0.8125rem;
+  }
+
+  #destinations-intro .category-filter__chip::after {
+    left: 10px;
+    right: 10px;
+    bottom: 4px;
+  }
+}
+
+/* ---------- The destination card grid ----------
+   One card design, one grid, for every destination in a region — see
+   DestinationCard/DestinationImage for why every card (image included)
+   is exactly the same size regardless of which ones have a real photo
+   yet. */
+.destinations-page__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+/* ---------- "More Places" compact list ---------- */
+.destinations-page__compact-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 1024px) {
+  .destinations-page__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .destinations-page__compact-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .destinations-page__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .destinations-page__compact-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .destinations-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,100 @@
+.mobile-nav__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: rgba(6, 11, 22, 0.55);
+}
+
+.mobile-nav__panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-modal);
+  width: min(86vw, 360px);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  /* The close button and the Call Now button sit near the top/bottom
+     edges of a fixed, full-height panel — keep them clear of a
+     notch or home-indicator (no-op on devices without either). */
+  padding-top: calc(var(--space-5) + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  /* The same dark premium glass as the navbar itself — a bit more
+     opaque here since this is a full-height panel doing the job of a
+     contrast surface, not a thin bar, but still genuinely translucent
+     rather than a flat opaque card. */
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-lg);
+}
+
+.mobile-nav__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.mobile-nav__title {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  color: #ffffff;
+}
+
+.mobile-nav__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.mobile-nav__close:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mobile-nav__list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: auto;
+}
+
+.mobile-nav__link {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  font-weight: var(--weight-medium);
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.mobile-nav__link--active {
+  color: var(--color-hero-highlight);
+}
+
+.mobile-nav__footer {
+  padding-top: var(--space-5);
+}
+
+.mobile-nav__call {
+  width: 100%;
+}
+
+/* Same deep premium blue as the desktop Call Now button, scoped here
+   so the rest of the site's primary buttons keep their own color. */
+.mobile-nav__call.btn--primary {
+  background: #1769aa;
+  border-color: #1769aa;
+}
+
+.mobile-nav__call.btn--primary:hover {
+  background: var(--color-hero-highlight);
+  border-color: var(--color-hero-highlight);
+}

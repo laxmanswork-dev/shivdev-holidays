@@ -1,0 +1,313 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  /* Solid white, elevated off the hero image below it with a soft
+     resting shadow + hairline border rather than a heavy block edge —
+     no backdrop-filter needed now that the bar is fully opaque. */
+  background: var(--color-header-bg);
+  border-bottom: 1px solid var(--color-header-border);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  /* Clears a device notch/Dynamic Island in portrait (no-op elsewhere). */
+  padding-top: env(safe-area-inset-top, 0px);
+  transition:
+    background-color var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+/* A touch more lift once the visitor actually starts scrolling — the
+   resting shadow above already does most of the work. */
+.site-header--scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* 100% transparent glass — but ONLY while the homepage hero video is
+   actually behind the header (see the pathname + scroll check in
+   Header.jsx). Scoped by redeclaring the shared --color-header-*
+   tokens locally, so NavBar.css/DestinationSearch.css automatically
+   pick up the light-on-glass variant too, without needing their own
+   duplicate rules. The moment the visitor scrolls past the hero (or
+   is on any other page, none of which have video behind the header),
+   this class is removed and the bar falls back to the normal solid
+   white treatment above — so nav text is never left unreadable
+   against a light canvas. */
+.site-header--transparent {
+  /* A dark navy wash, not literal transparency — the video behind
+     swings from a dark road to a bright sky, so nav text/icons need
+     a baseline dark backing (plus blur) to stay readable no matter
+     which frame is showing, rather than relying on per-element
+     text-shadow alone. */
+  --color-header-bg: rgba(8, 22, 38, 0.4);
+  --color-header-border: transparent;
+  --color-header-text: #ffffff;
+  --color-header-nav-text: rgba(255, 255, 255, 0.92);
+  --color-header-nav-active: var(--color-hero-highlight);
+  --color-header-hover-wash: rgba(255, 255, 255, 0.14);
+  /* Fully opaque white, not glass — a search field needs the same
+     unmistakable, always-readable fill/border/text it has everywhere
+     else on the site, regardless of the video frame behind it. */
+  --color-header-search-bg: #ffffff;
+  --color-header-search-border: #ffffff;
+  --color-header-search-icon: #1e293b;
+  --color-header-search-placeholder: #64748b;
+  --color-header-focus: #ffffff;
+  background: var(--color-header-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: none;
+}
+
+.site-header--transparent.site-header--scrolled {
+  box-shadow: none;
+}
+
+/* A small resting shadow on the search field only (the rest of the
+   glass bar stays flat) — keeps it reading as a distinct, tappable
+   control against any video frame, not just a slightly-lighter patch
+   of glass. */
+.site-header--transparent .destination-search__trigger {
+  box-shadow: 0 1px 6px rgba(3, 12, 22, 0.18);
+}
+
+/* DestinationSearch.css's own :hover rule switches to
+   --color-header-text for its icon/label — correct on the solid
+   header (dark navy hover-text on a lightened-white hover-bg), but
+   this field's resting bg/text are now both a fixed opaque
+   white/dark-navy pair regardless of header state (see above), so
+   that generic hover rule would turn the text white while the
+   background is still near-white. Keep both dark here instead. */
+.site-header--transparent .destination-search__trigger:hover {
+  color: var(--color-header-search-icon);
+}
+
+.site-header--transparent .destination-search__trigger:hover .destination-search__trigger-label {
+  color: var(--color-header-search-icon);
+}
+
+/* Same tight, tinted text-shadow the hero's own heading/body/eyebrow
+   already use (see Section.css's #home rules) — nav links live
+   outside #home's DOM (they're in the header, not the hero section),
+   so they don't inherit that shadow automatically and need their own
+   copy for the same legibility reason. */
+.site-header--transparent .nav-bar__link {
+  text-shadow: 0 1px 3px rgba(3, 12, 22, 0.4);
+}
+
+.site-header :focus-visible {
+  outline-color: var(--color-header-focus);
+}
+
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  min-height: var(--header-height);
+}
+
+/* The brand block: logo image + "Shivdev / Holidays" wordmark, one
+   flex row, vertically centered against each other for free via
+   align-items — no separate alignment rule needed. Logo height
+   trimmed slightly (was 56/70px) now that the wordmark is a compact
+   bold sans rather than a taller script mark, so the two balance
+   more naturally together instead of the logo visually dominating. */
+.site-header__brand {
+  display: inline-flex;
+  align-items: center;
+  /* Logo → wordmark gap: 4px (was 8px) — the wordmark sits a touch closer
+     to the logo. */
+  gap: var(--space-1);
+  flex-shrink: 0;
+  height: 52px;
+}
+
+/* The logo artwork itself is a wide scene illustration (1536×1024,
+   a 3:2 rectangle), not an icon drawn for a circular mark — cropping
+   it into a small circle (an earlier treatment) always meant hiding
+   most of it behind a zoomed, off-center slice. height: 100% +
+   aspect-ratio (rather than the aspect-ratio living on .brand itself)
+   means the frame is sized to the SAME 3:2 ratio as the source image
+   — object-fit shows the complete artwork, nothing cropped or
+   zoomed — while still leaving .brand free to grow wider for the
+   wordmark beside it, instead of being locked to the logo's own
+   ratio. No background/frame at all — just the artwork. */
+.site-header__logo {
+  display: block;
+  height: 100%;
+  width: auto;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+/* The wordmark: both lines in Playfair Display (--font-brand), the
+   typeface reserved for the "Shivdev Holidays" brand name — everything
+   else in the header (nav links, search, Call Now) stays in the site's
+   Work Sans. "Shivdev" is bold (700), the main word; "HOLIDAYS"
+   underneath is smaller, tracked-wide uppercase at medium weight
+   (500), for clear hierarchy between the two lines with one
+   typeface. The tracking on the two lines is tuned so they come out
+   the same width (see the notes on each rule below). Both lines use
+   the header's own adaptive text-color variables (--color-header-text
+   / -nav-text) — NOT a hardcoded white — since the header itself is
+   only dark/transparent over the homepage hero; everywhere else
+   (every other page, and the homepage once scrolled past the hero)
+   it's a solid white bar, where literal white text would disappear.
+   This is the same pattern the nav links/search icon/toggle already
+   use for the same reason. */
+.site-header__wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.site-header__wordmark-main {
+  font-family: var(--font-brand);
+  font-size: 1.3125rem;
+  font-weight: var(--weight-bold);
+  /* Tracking tuned so "Shivdev" comes out the same visible width as
+     the "HOLIDAYS" line under it (measured: within about a pixel at
+     both wordmark sizes — em-based so it holds across the 1200px
+     breakpoint below). Change the two lines' tracking TOGETHER. The
+     negative right margin cancels the extra space letter-spacing adds
+     after each line's LAST letter, so both lines share the same left
+     and right edges. */
+  letter-spacing: 0.083em;
+  margin-right: -0.083em;
+  color: var(--color-header-text);
+}
+
+.site-header__wordmark-sub {
+  font-family: var(--font-brand);
+  font-size: 0.8125rem;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.235em;
+  margin-right: -0.235em;
+  text-transform: uppercase;
+  color: var(--color-header-nav-text);
+}
+
+/* 1200px, not the 1025px desktop breakpoint: between 1025–1199px the
+   nav, search and Call Now already leave little slack beside the
+   brand, so the wordmark keeps its base size there. */
+@media (min-width: 1200px) {
+  .site-header__wordmark-main {
+    font-size: 1.5rem;
+  }
+
+  .site-header__wordmark-sub {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Smallest phones (≤ 373px): the search/call/menu actions on the
+   right already claim most of the bar's width at this size, and even
+   the bold wordmark doesn't fit next to them without overflowing
+   below this width (tested directly: 372px overflows, 375px doesn't
+   — re-measured after "Shivdev"/"HOLIDAYS" were both sized up) — so
+   the wordmark steps aside entirely here and the mark falls back to
+   the logo alone. From 370px up there's room for the full two-line
+   mark. */
+@media (max-width: 373px) {
+  .site-header__wordmark {
+    display: none;
+  }
+}
+
+@media (min-width: 1025px) {
+  .site-header__brand {
+    height: 64px;
+  }
+}
+
+/* Desktop: the links are truly centered in the bar, not merely
+   centered in whatever space is left between logo and actions (which
+   sits off-center because those two sides differ in width). The bar
+   becomes a 1fr / auto / 1fr grid at the desktop breakpoint below —
+   brand pinned left, actions pinned right, links in the middle. */
+.site-header__nav {
+  display: none;
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.site-header__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-header-text);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.site-header__toggle:hover {
+  background: var(--color-header-hover-wash);
+}
+
+.site-header__toggle-icon {
+  display: inline-flex;
+}
+
+@media (min-width: 1025px) {
+  .site-header__bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .site-header__brand {
+    justify-self: start;
+  }
+
+  .site-header__actions {
+    justify-self: end;
+  }
+
+  .site-header__nav {
+    display: flex;
+  }
+
+  .site-header__toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header__call .btn__label {
+    display: none;
+  }
+}
+
+/* Call Now, scoped to the header only (Button.css's shared
+   .btn--primary stays untouched, so every other primary button on
+   the site keeps its own color) — always a fully opaque fill (unlike
+   the translucent glass around it) so it stays the one unmistakably
+   solid, prominent action in the bar. See tokens.css's
+   --color-header-call-bg for why it's Deep Navy Blue rather than
+   Travel Blue (it used to compute pixel-identical to the hero's own
+   "Book Now" button).
+   Shape: the site's normal button shape — a plain rounded rectangle
+   (Button.css's own border-radius), not a custom cut silhouette. */
+.site-header__call.btn--primary {
+  background: var(--color-header-call-bg);
+  border-color: var(--color-header-call-bg);
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(3, 12, 22, 0.35);
+}
+
+.site-header__call.btn--primary:hover {
+  background: var(--color-header-call-bg-hover);
+  border-color: var(--color-header-call-bg-hover);
+}

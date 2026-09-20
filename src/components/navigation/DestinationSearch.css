@@ -1,0 +1,226 @@
+/*
+  Navbar destination search — a quiet, input-styled trigger (not a
+  button pretending to be an input) that opens a small dropdown panel
+  directly below it.
+
+  Shape: the site's normal standard shape — a plain rounded
+  rectangle (Button.css's own border-radius), not a custom cut
+  silhouette. Light-grey fill with dark text, matching the header's
+  own solid-white/dark-slate system.
+*/
+
+.destination-search {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.destination-search__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-header-search-border);
+  background: var(--color-header-search-bg);
+  color: var(--color-header-search-icon);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.destination-search__trigger-icon {
+  flex-shrink: 0;
+  /* The Search glyph's own artwork isn't perfectly symmetric (the
+     handle's stroke weight sits toward the bottom-right of its
+     viewBox), so centering its box against the label's line-height —
+     technically exact — still reads as sitting a touch high next to
+     the text. A 1px nudge corrects that without being a real,
+     measurable misalignment either way. */
+  transform: translateY(1px);
+}
+
+/* A little more presence on desktop, where there's room — the
+   compact icon-only trigger below 640px is untouched. */
+@media (min-width: 1025px) {
+  .destination-search__trigger {
+    min-width: 220px;
+  }
+}
+
+.destination-search__trigger:hover {
+  border-color: color-mix(in srgb, var(--color-header-nav-active) 45%, transparent);
+  background: color-mix(in srgb, var(--color-header-search-bg) 95%, black 5%);
+  color: var(--color-header-text);
+}
+
+.destination-search__trigger-label {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  color: var(--color-header-search-placeholder);
+  white-space: nowrap;
+}
+
+.destination-search__trigger:hover .destination-search__trigger-label {
+  color: var(--color-header-text);
+}
+
+/* Icon-only on narrow headers — the label reappears once there's
+   room for it. */
+@media (max-width: 640px) {
+  .destination-search__trigger {
+    padding: 0 12px;
+  }
+
+  .destination-search__trigger-label {
+    display: none;
+  }
+}
+
+.destination-search__panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: var(--z-overlay);
+  width: min(380px, 92vw);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Anchor the panel to the viewport edges on narrow screens instead
+   of the trigger's own position, so it can never overflow off the
+   left edge (the trigger sits near the right of the header). */
+@media (max-width: 640px) {
+  .destination-search__panel {
+    position: fixed;
+    top: var(--header-height);
+    left: var(--space-4);
+    right: var(--space-4);
+    width: auto;
+    max-height: calc(100svh - var(--header-height) - var(--space-6));
+    overflow-y: auto;
+  }
+}
+
+.destination-search__title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.destination-search__field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 44px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.destination-search__field:focus-within {
+  border-color: var(--color-primary);
+}
+
+.destination-search__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+
+.destination-search__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.destination-search__results {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-3);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.destination-search__result {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 44px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  color: var(--color-text);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.destination-search__result:hover,
+.destination-search__result--active {
+  background: var(--color-background-alt);
+}
+
+.destination-search__result-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-medium);
+}
+
+.destination-search__result-meta {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Small section label above the at-rest "Popular destinations" list
+   — quieter than the panel title, not a button, not a card. */
+.destination-search__label {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.destination-search__view-all {
+  margin-top: var(--space-2);
+  padding-block: var(--space-2);
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-primary);
+  border-top: 1px solid var(--color-border);
+}
+
+.destination-search__view-all:hover {
+  color: var(--color-primary-hover);
+}
+
+.destination-search__empty {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}

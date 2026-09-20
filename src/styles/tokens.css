@@ -1,0 +1,298 @@
+/*
+  Design Tokens — Shivdev Holidays
+  ---------------------------------
+  Single source of truth for color, spacing, radius, shadow,
+  motion and breakpoint values. No visual value should be
+  hardcoded in a component — reference a token instead.
+
+  Palette direction — LOCKED, reverted to the approved premium
+  ICE-BLUE identity after a brief (rejected) detour into a medium-
+  blue (#17689a) page canvas. The main page canvas is a light,
+  visibly-blue-but-quiet ice tone (#eef5fa) — NOT white, and NOT the
+  stronger medium blue. Travel Blue (#1e5a91) is an ACTION color
+  only (buttons, links, active nav) — it is never the page
+  background. Deep Ocean (#0b3558) is reserved for the footer and a
+  closing/dramatic CTA section — never the normal page background.
+  White is a content surface (cards, panels, forms) sitting ON the
+  ice-blue canvas. Navy is editorial type, used directly on the ice/
+  white canvas (no inversion needed there — only Deep Ocean sections
+  need white-family text). The background stays quiet on purpose so
+  future travel photography can become the visual hero. No gold, no
+  yellow, no bronze, no purple/pink/neon/turquoise/aqua. Do not turn
+  the whole site medium-blue (#17689a) or dark (#0b3558) again —
+  this ice-blue direction is locked.
+
+  Semantic roles (use these, not raw hex, in components):
+    --color-background         → the page canvas: ice blue. Every
+      major page starts here — see globals.css (body).
+    --color-background-alt     → a secondary/soft ice tone for
+      selected supporting sections — still a CANVAS, not a card.
+    --color-background-dark    → the Deep Ocean canvas, reserved for
+      the footer and a dark, closing CTA section.
+    --color-surface            → white content surfaces sitting ON
+      the ice-blue canvas: cards, inputs, search/booking panels,
+      forms, the mobile-nav flyout panel.
+    --color-white               → the literal white value backing
+      --color-surface, and text/icons that must read as pure white
+      on a dark (Deep Ocean) section.
+    --color-text / --color-text-muted → navy editorial type, used
+      directly on the ice-blue/white canvas.
+    --color-text-inverse / -body / -muted / -subtle → the white-
+      family type scale for content sitting on the Deep Ocean canvas
+      specifically (headings / primary body / secondary / smallest
+      metadata).
+    --color-primary / --color-primary-hover → Travel Blue → Deep
+      Ocean: the ACTION color (buttons, links, active nav, focus) —
+      an accent, not the page canvas.
+    --color-border / --color-border-subtle → the hairlines between
+      cards, inputs and sections. Always subtle; never a heavy box.
+    --color-focus / --color-focus-inverse → focus ring color, light
+      surface vs. Deep Ocean.
+*/
+
+:root {
+  /* ---------- Color: the Shivdev blues ---------- */
+  --color-deep-ocean: #0b3558;
+  --color-travel-blue: #1e5a91;
+  --color-navy: #10243d;
+
+  /* ---------- Color: brand (navy — editorial type, not backgrounds) ---------- */
+  --color-navy-950: #060b16;
+  --color-navy-900: #0a1428;
+  --color-navy-800: #102040;
+  --color-navy-700: #16305c;
+
+  /* ---------- Color: primary (Travel Blue accent) ----------
+     The ACTION color: primary buttons, active nav, links, focus.
+     Deepens to Deep Ocean on hover/press. Confident and calm rather
+     than bright/neon — used deliberately, not as a page-wide wash;
+     it is never the page background. */
+  --color-primary: var(--color-travel-blue);
+  --color-primary-hover: var(--color-deep-ocean);
+  --color-primary-active: var(--color-deep-ocean);
+  --color-primary-border: var(--color-primary);
+
+  /* ---------- Color: backgrounds ----------
+     PAGE CANVAS, not card color. --color-background (ice blue) must
+     read as visibly blue — not near-white, and much lighter than
+     Travel Blue or Deep Ocean. --color-background-alt is a slightly
+     deeper ice tone for the rhythm's "soft ice" beat.
+     --color-background-dark (Deep Ocean) is reserved for the footer
+     and a closing CTA — never the default. Content surfaces (cards,
+     inputs, panels) are --color-surface (true white), placed ON one
+     of these canvases for the "ice-blue page → white card" contrast
+     that is the core of this palette. */
+  --color-background: #eef5fa;
+  --color-background-alt: #e5eff7;
+  --color-background-dark: var(--color-deep-ocean);
+  --color-surface: var(--color-white);
+
+  /* ---------- Color: non-home page background system ----------
+     A deliberately distinct (if closely related) ice-blue family for
+     every page EXCEPT the homepage, which keeps the three tones above
+     exactly as they are. Same "ice-blue canvas → white card" logic —
+     --color-page-bg is the main canvas, --color-section-bg a very
+     slightly deeper alternate beat, and --color-soft-ice-blue a
+     stronger supporting tone reserved for small accents/details only
+     (a border, a small badge) — never a large block behind text. See
+     Section.jsx's `background="ice"|"ice-alt"` and utilities.css's
+     `.page-ice-bg` for where these are actually applied. */
+  --color-page-bg: #f5fbfd;
+  --color-section-bg: #eaf6fa;
+  --color-soft-ice-blue: #a9d8e5;
+
+  /* ---------- Color: neutrals ---------- */
+  --color-white: #ffffff;
+  --color-warm-white: #fbfaf8;
+  --color-gray-100: #eceff3;
+  --color-gray-300: #c8cfd9;
+  --color-gray-500: #7c8797;
+  --color-gray-700: #4a5568;
+
+  /* ---------- Color: text ----------
+     Deep navy rather than harsh black — used directly on the ice-
+     blue/white canvas (no inversion needed there). */
+  --color-text: var(--color-navy);
+  --color-text-muted: #52677c;
+  --color-text-inverse: #ffffff;
+  /* The white-family type scale below is for Deep Ocean sections
+     only (footer, closing CTA) — the ice-blue canvas uses the navy
+     tokens above directly. */
+  --color-text-inverse-body: rgba(255, 255, 255, 0.86);
+  --color-text-inverse-muted: rgba(255, 255, 255, 0.7);
+  --color-text-inverse-subtle: rgba(255, 255, 255, 0.64);
+
+  /* Hero-only text system — explicit design decision, scoped to
+     #home in Section.css/Button.css, deliberately DIFFERENT from the
+     --color-text-inverse* scale every other .section--bg-dark
+     section (e.g. the footer, Contact) still uses. White-family by
+     design (readability against varied moving footage — a bright
+     coastal scene AND a darker green hill scene — takes priority
+     over a navy/branded hero text color; see the tokens.css intro
+     for why the rest of the site still uses navy on its own light
+     surfaces). --color-hero-heading doubles as the secondary-link
+     color (both read pure white); --color-hero-text is a soft
+     off-white for the paragraph, one step down in emphasis;
+     --color-hero-eyebrow a pale coastal tint for the small label;
+     --color-hero-accent is the CTA-only travel-blue action color;
+     --color-hero-highlight is reserved for a genuinely small
+     highlight/active-indicator moment within the hero, kept apart
+     from heading/body use.
+
+     Contrast note: white text alone is not reliably readable against
+     a bright sky/ocean patch — HeroVideo.css's scrim does that work.
+     It's tuned to clear WCAG AA against anything mid-toned or darker
+     (including the current fallback and the Kodaikanal hills), but
+     cannot GUARANTEE AA against the brightest plausible sky tones
+     while also staying visually subtle — those two goals trade off
+     against each other; see the scrim's own comment for the numbers. */
+  --color-hero-heading: var(--color-text-inverse);
+  --color-hero-text: #f5f8fa;
+  --color-hero-eyebrow: #dceeff;
+  --color-hero-accent: #1769aa;
+  --color-hero-highlight: #4da3d9;
+
+  /* Header-only color system — explicit design decision, scoped to
+     .site-header in Header.css/NavBar.css/DestinationSearch.css (the
+     search DROPDOWN panel is unaffected — only its collapsed trigger,
+     which lives inline in the header bar, uses these).
+
+     Solid white bar, dark slate text/icons by default. Elevation
+     comes from a resting box-shadow + hairline border (see
+     Header.css). Most of these get locally redeclared by
+     .site-header--transparent (see Header.css) for the
+     100%-transparent-glass state over the homepage hero video.
+     --color-header-nav-active is the shared brand-blue accent for
+     the active/hover link state and focus ring. --color-header-call-
+     bg/-hover are Call Now's own always-solid blue — deliberately
+     NOT part of the transparent-glass swap, so it stays the one
+     unmistakably solid action in the bar in every state. */
+  --color-header-bg: #ffffff;
+  --color-header-border: rgba(15, 23, 42, 0.08);
+  --color-header-text: #1e293b;
+  --color-header-nav-text: #1e293b;
+  --color-header-nav-active: #2563eb;
+  --color-header-hover-wash: rgba(15, 23, 42, 0.06);
+  --color-header-search-bg: #f1f5f9;
+  /* Transparent at rest — the light fill above already reads as a
+     distinct pill against the white header, so no outline is needed
+     to compete with Call Now's solid fill next to it. The trigger's
+     own :hover/:focus-visible states (DestinationSearch.css) still
+     draw a real border for interactive affordance. */
+  --color-header-search-border: transparent;
+  --color-header-search-icon: #334155;
+  --color-header-search-placeholder: #5a6a80;
+  --color-header-focus: #2563eb;
+  /* Same premium blue as the hero's own "Book Now" button
+     (HeroTripSearch.css darkens --color-hero-accent by 15% black for
+     its resting fill) — requested explicitly so Call Now reads as
+     the same brand blue rather than the darker Deep Navy it used to
+     be. Hover deepens further, same direction as every other primary
+     button's hover state on the site (see Button.css). */
+  --color-header-call-bg: color-mix(in srgb, var(--color-hero-accent) 85%, black 15%);
+  --color-header-call-bg-hover: color-mix(in srgb, var(--color-hero-accent) 70%, black 30%);
+
+  /* ---------- Color: structure ---------- */
+  --color-border: #d3e0eb;
+  --color-border-subtle: #d7e5ee;
+  --color-border-strong: #c3cbd6;
+  --color-border-inverse: rgba(255, 255, 255, 0.16);
+
+  /* ---------- Color: semantic ---------- */
+  --color-focus: var(--color-primary);
+  --color-focus-inverse: #ffffff;
+  --color-success: #1f7a4d;
+  --color-error: #b3261e;
+
+  /* ---------- Spacing scale (4px base) ---------- */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 2.5rem;    /* 40px */
+  --space-8: 3rem;      /* 48px */
+  --space-9: 4rem;      /* 64px */
+  --space-10: 5rem;     /* 80px */
+  --space-11: 6.5rem;   /* 104px */
+  --space-12: 8rem;     /* 128px */
+
+  /* ---------- Container widths ---------- */
+  --container-sm: 640px;
+  --container-md: 860px;
+  --container-lg: 1120px;
+  --container-xl: 1320px;
+  --container-2xl: 1520px;
+  --container-gutter: clamp(1.25rem, 4vw, 2.5rem);
+
+  /* Editorial measure: caps how wide a section's heading/copy block
+     gets inside the (much wider) container on large screens, so
+     text keeps a comfortable reading line-length instead of
+     stretching edge-to-edge. */
+  --content-measure: 46rem;
+
+  /* ---------- Radius ---------- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* ---------- Shadow (restrained, low-elevation) ---------- */
+  --shadow-sm: 0 1px 2px rgba(10, 20, 40, 0.06);
+  --shadow-md: 0 6px 20px rgba(10, 20, 40, 0.08);
+  --shadow-lg: 0 16px 40px rgba(10, 20, 40, 0.12);
+
+  /* ---------- Motion ---------- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 450ms;
+
+  /* ---------- Breakpoints (reference only — CSS vars are not
+     usable inside @media; kept here for documentation and for
+     JS/matchMedia consumers via hooks) ---------- */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+  --breakpoint-3xl: 1920px;
+
+  /* ---------- Z-index scale ---------- */
+  --z-header: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  /* ---------- Header height ----------
+     Single source of truth for the sticky header's rendered height.
+     Consumed by Header.css (as a min-height, so it can never drift
+     from this value) and by Section.css's scroll-margin-top, so an
+     anchored section never hides underneath the sticky header. */
+  /* A bit taller than the logo/buttons strictly need (56px/70px,
+     44px tall actions) — the extra becomes even top/bottom breathing
+     room via .site-header__bar's own align-items: center, rather
+     than a hard-coded padding value that could drift out of sync
+     with this height. */
+  --header-height-mobile: 84px;
+  --header-height-desktop: 92px;
+  --header-height: var(--header-height-mobile);
+}
+
+@media (min-width: 1025px) {
+  :root {
+    --header-height: var(--header-height-desktop);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

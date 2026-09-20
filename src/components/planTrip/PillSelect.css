@@ -1,0 +1,77 @@
+.pill-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.pill-select__label {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: var(--weight-medium);
+  color: var(--pt-label);
+}
+
+.pill-select__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Sized compactly enough by default that all five Trip Type options
+   share one row next to the trip summary column on tablet/desktop;
+   the mobile override below trades that back for more generous
+   padding/type once wrapping to multiple rows is expected anyway. */
+.pill-select__option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pt-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+@media (max-width: 480px) {
+  .pill-select__option {
+    padding-inline: var(--space-4);
+    font-size: var(--text-body-sm);
+    white-space: normal;
+  }
+}
+
+.pill-select__option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.pill-select__option:hover {
+  border-color: var(--color-border-strong);
+}
+
+.pill-select__option--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.pill-select__option:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

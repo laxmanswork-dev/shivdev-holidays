@@ -1,0 +1,11 @@
+/*
+  Single-destination detail page. Reuses .page-placeholder's vertical
+  flex rhythm (see styles/utilities.css) — this file only caps the
+  photo's width so it doesn't stretch to the full text measure, using
+  the same DestinationImage frame every other destination photo on the
+  site uses (see components/destinations/DestinationImage).
+*/
+.destination-detail__media {
+  width: 100%;
+  max-width: 22rem;
+}

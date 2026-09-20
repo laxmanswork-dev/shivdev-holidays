@@ -1,0 +1,233 @@
+/*
+  Plan Your Trip — the site's planning/booking hub. The form/summary
+  cards are Deep Navy Blue against the page's own white — the card's
+  color IS the separation now, no border/shadow trick needed for that
+  (though both stay, for edge definition). These three tokens are
+  scoped to this page only (declared on the section that contains
+  both the form and the summary card) — they intentionally do not
+  touch the site-wide --color-surface/--color-text-muted/--color-border
+  tokens, which stay exactly as they are everywhere else.
+
+  --pt-label reuses --color-text-inverse-muted (the same white-family
+  scale .section--bg-dark uses in Section.css for the footer/hero) —
+  correct here for the same reason: any text sitting DIRECTLY on this
+  now-dark card needs it. The white input boxes nested inside (see
+  "Input controls stay pure white" below) are unaffected — they still
+  use --color-text/--color-text-muted at full strength, which is still
+  correct since those boxes are still white regardless of the card
+  behind them. The full set of on-card text/border overrides for
+  headings, dd values, dividers etc. lives further down this file.
+*/
+#plan-trip-form {
+  /* A touch lighter than pure Deep Navy Blue (#0F3B5F) — still dark
+     and premium, just a subtler "deep ocean" shade. */
+  --pt-card-bg: #15466f;
+  --pt-label: var(--color-text-inverse-muted);
+  --pt-border: #c9dce8;
+}
+
+/* "Call Shivdev Holidays" — the same inversion Section.css's
+   .section--bg-dark already gives every secondary button on a dark
+   surface elsewhere on the site (footer, Contact); Travel Blue text
+   on transparent has too little contrast against Deep Navy. Higher
+   specificity than Button.css's own .btn--secondary (two classes vs
+   one), so this safely wins regardless of stylesheet import order —
+   unlike same-file/equal-specificity overrides, which don't (see the
+   plain-color edits made directly to .plan-trip__section-heading etc.
+   further down instead, for exactly that reason). */
+.plan-trip__actions .btn--secondary {
+  color: var(--color-white);
+  border-color: var(--color-border-inverse);
+}
+
+.plan-trip__actions .btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.plan-trip__actions .btn--secondary:focus-visible {
+  outline-color: var(--color-focus-inverse);
+}
+
+/* main is a flex column (see globals.css) whose own box can run
+   slightly taller than this page's combined section content —
+   without this, that leftover sliver shows <body>'s own ice-blue
+   canvas color peeking through beneath the last section, right
+   before the footer. Letting the last section absorb any leftover
+   space keeps this page's white background solid all the way down. */
+#plan-trip-help {
+  flex: 1 1 auto;
+}
+
+/* The heading → form gap was this intro's 48px bottom padding stacked on
+   the form section's own 48px top padding (96px total). Only the
+   intro's bottom padding is removed, so the form sits 48px under the
+   heading. */
+#plan-trip-intro {
+  padding-bottom: 0;
+}
+
+/* The page label ("Plan Your Trip") is bold (700). */
+#plan-trip-intro .eyebrow {
+  font-weight: var(--weight-bold);
+}
+
+/* The page's main heading (h1): the intro sentence itself, at the
+   heading-lg size — it's a full sentence, so it wraps to two balanced
+   lines within the reading measure rather than running at the larger
+   heading-xl size. */
+.plan-trip__intro-line {
+  max-width: var(--content-measure);
+  text-wrap: balance;
+}
+
+/* This section's grid needs the container's full width, same reason
+   Destinations.css caps/uncaps its own grids. */
+.plan-trip__section-content {
+  max-width: none;
+}
+
+.plan-trip__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
+  gap: var(--space-7);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .plan-trip__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.plan-trip__form {
+  min-width: 0;
+  padding: var(--space-6);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pt-border);
+  background: var(--pt-card-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.plan-trip__form-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (max-width: 480px) {
+  .plan-trip__form {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+.plan-trip__field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 600px) {
+  .plan-trip__field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sits directly on the dark card (not inside a white box) — see the
+   --pt-label note at the top of this file. */
+.plan-trip__section-heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-inverse);
+}
+
+.plan-trip__contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border-inverse);
+}
+
+.plan-trip__optional {
+  font-weight: var(--weight-regular);
+  color: var(--color-text-inverse-subtle);
+}
+
+.trip-field__textarea {
+  height: auto;
+  padding-block: var(--space-3);
+  resize: vertical;
+  font-family: var(--font-body);
+}
+
+.plan-trip__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.plan-trip__actions .btn {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .plan-trip__actions {
+    flex-direction: column;
+  }
+
+  .plan-trip__actions .btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Success panel (in place of the contact fields, once the
+   WhatsApp message has been sent) ---------- */
+.plan-trip__success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+/* Lightened toward white rather than a hardcoded new hex — keeps
+   this tied to the same --color-success the rest of the site uses,
+   just legible against the dark card. */
+.plan-trip__success-icon {
+  color: color-mix(in srgb, var(--color-success) 55%, white);
+}
+
+.plan-trip__success-text {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  color: var(--color-text-inverse);
+}
+
+.plan-trip__make-changes {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-inverse);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.plan-trip__make-changes:focus-visible {
+  outline-color: var(--color-focus-inverse);
+}
+
+/* ---------- Summary column ---------- */
+.plan-trip__summary-col {
+  min-width: 0;
+  display: block;
+}
+
+@media (min-width: 1025px) {
+  .plan-trip__summary-col {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-5));
+  }
+}

@@ -1,0 +1,113 @@
+/*
+  Utilities — Shivdev Holidays
+  -----------------------------
+  A small, deliberate set of layout/accessibility helpers.
+  This is not a utility-class framework — keep it short.
+*/
+
+.container {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--container-gutter);
+}
+
+.container--narrow {
+  max-width: var(--container-md);
+}
+
+.container--wide {
+  max-width: var(--container-2xl);
+}
+
+/* Visually hide content while keeping it available to screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip-to-content link: hidden until focused */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: var(--z-toast);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-navy-900);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  transition: top var(--duration-fast) var(--ease-standard);
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+/* Consistent, visible focus state across the app */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.aspect-16-9 {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-1-1 {
+  aspect-ratio: 1 / 1;
+}
+
+/* Non-homepage page canvas for pages with no <Section> wrapper of
+   their own (Contact, destination detail, NotFound) — they
+   render a bare Container directly inside <main>, so this paints
+   the same ice-blue canvas used everywhere else on non-home pages
+   (see Section.css's .section--bg-ice) rather than inheriting
+   <body>'s own --color-background (the homepage's tone, left
+   untouched). min-height: 100% relies on <main> already having a
+   definite flex-resolved height (see globals.css's #root/main flex
+   column), so even a short page like NotFound fills the full
+   visible page height instead of tightly wrapping its content. */
+.page-ice-bg {
+  flex: 1 1 auto;
+  min-height: 100%;
+  background: var(--color-page-bg);
+}
+
+/* Generic vertical rhythm for routing placeholder pages.
+   Replaced per-page once each page gets its final design.
+
+   These pages render directly on <body>, which is the ice-blue
+   canvas — navy type works directly on it, same as everywhere else
+   on this light surface, so no color overrides are needed here. */
+.page-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-block: var(--space-9) var(--space-11);
+}
+
+.page-placeholder ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.page-placeholder__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+}

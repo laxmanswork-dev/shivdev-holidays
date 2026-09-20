@@ -1,0 +1,81 @@
+/*
+  Destination photo container — a fixed, controlled aspect ratio that
+  never changes whether the real photo is present or not, so adding
+  the actual file later (see public/images/destinations/README.md)
+  needs no layout changes. Neutral premium placeholder (a soft ice
+  tint + a single restrained pin mark), never a gradient pretending to
+  be a photo and never a broken-image icon.
+*/
+
+.destination-image {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-background-alt);
+}
+
+/* The Destinations page's own card — every one of the 61 destinations
+   uses this exact frame, whether or not a real photo exists yet (see
+   DestinationCard and public/images/destinations/README.md). 4:3
+   rather than a wider ratio because several of the real photos already
+   in place are tall temple gopurams — a wider frame would force a much
+   more aggressive crop to fill it. */
+.destination-image--card {
+  aspect-ratio: 4 / 3;
+}
+
+/* Used by the homepage's featured-destinations showcase — a touch
+   taller than the standard "featured" ratio for an editorial feel,
+   but deliberately not a full 3:4 portrait: that section needs to
+   fit within one screen, and a true portrait photo at 4-across would
+   push it well past that. */
+.destination-image--portrait {
+  aspect-ratio: 4 / 3;
+}
+
+.destination-image__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-standard);
+}
+
+.destination-image__img--visible {
+  opacity: 1;
+}
+
+.destination-image__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-border-strong);
+  background: linear-gradient(
+    155deg,
+    var(--color-background-alt) 0%,
+    var(--color-background) 100%
+  );
+}
+
+/* A subtle image-reveal + lift on the card's own hover (see
+   DestinationCard.css, and FeaturedDestinations.css for the homepage
+   showcase) rather than the image driving its own animation — calm,
+   not attention-seeking. */
+@media (prefers-reduced-motion: no-preference) {
+  .destination-card:hover .destination-image__img--visible,
+  .featured-destination:hover .destination-image__img--visible {
+    transform: scale(1.04);
+  }
+
+  .destination-image__img {
+    transition:
+      opacity var(--duration-slow) var(--ease-standard),
+      transform var(--duration-slow) var(--ease-standard);
+  }
+}

@@ -1,0 +1,62 @@
+/*
+  Footer — intentionally plain.
+  This is a routing-level placeholder, not the final footer design.
+*/
+
+.site-footer {
+  /* Was --space-11 (104px) — combined with the section above's own
+     bottom padding, that read as an unnecessarily large gap before
+     the footer. This is the footer's own spacing only; the section
+     above keeps its own padding untouched. */
+  margin-top: var(--space-8);
+  padding-block: var(--space-8);
+  background: var(--color-background-dark);
+  color: var(--color-text-inverse-muted);
+}
+
+.site-footer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.site-footer__brand {
+  font-family: var(--font-brand);
+  font-size: var(--text-heading-sm);
+  color: var(--color-text-inverse);
+}
+
+.site-footer a {
+  color: var(--color-text-inverse-muted);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.site-footer a:hover {
+  color: var(--color-text-inverse);
+}
+
+.site-footer :focus-visible {
+  outline-color: var(--color-focus-inverse);
+}
+
+.site-footer ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.site-footer__copyright {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border-inverse);
+  font-size: var(--text-caption);
+  color: var(--color-text-inverse-subtle);
+}
+
+/* .body-sm sets its own dark text colour, which beat the footer's
+   inherited light colour and rendered the address at ~2.2:1 on the
+   navy background (WCAG AA needs 4.5:1). */
+.site-footer .body-sm {
+  color: var(--color-text-inverse-muted);
+}

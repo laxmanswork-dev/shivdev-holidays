@@ -1,0 +1,43 @@
+/*
+  Background video layer for a hero section — pass <HeroVideo> as
+  Section's `media` prop (see Section.jsx), which renders it as a
+  full-bleed sibling of .container and handles the content/media
+  stacking order (.section--has-media).
+*/
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-video__el {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  /* Brightness pulled down 40% total (on request) on top of the
+     existing contrast + saturation lift, so the footage itself reads
+     darker and more premium — not just the scrim on top of it. */
+  filter: contrast(1.08) saturate(1.08) brightness(0.6);
+}
+
+/* A uniform tint across the whole frame — deliberately NOT
+   left-weighted — so headline/body/CTA legibility stays consistent
+   no matter which part of the frame text happens to sit over as the
+   video cuts between bright coastal shots and darker hill roads.
+   0.35 is enough to close the gap on the brightest sky frames
+   without reading as a heavy filter; the small text-shadow on the
+   hero copy itself (see Section.css) does the rest. A dark navy tint
+   (rather than plain black) ties it to the site's own deep-ocean
+   brand color instead of a generic shadow. `pointer-events: none`
+   keeps it purely visual — never a hit-target above the real CTAs
+   (already true via the z-index stacking below, this is
+   belt-and-braces). */
+.hero-video__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 15, 25, 0.35);
+  pointer-events: none;
+}

@@ -1,0 +1,76 @@
+/* This whole component only ever renders on Plan Your Trip's dark
+   card (see PlanTrip.css) — .places-to-visit__heading and
+   __duration strong sit directly on it, so they use the inverse
+   scale; .places-to-visit__chip below stays on --color-text since
+   it's still a white box regardless of the card behind it. */
+.places-to-visit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border-inverse);
+}
+
+.places-to-visit__heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-inverse);
+}
+
+.places-to-visit__duration {
+  margin: calc(var(--space-3) * -1) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--pt-label);
+}
+
+.places-to-visit__duration strong {
+  color: var(--color-text-inverse);
+  font-weight: var(--weight-semibold);
+}
+
+.places-to-visit__hint {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--pt-label);
+}
+
+.places-to-visit__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.places-to-visit__chip {
+  min-height: 40px;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pt-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-medium);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.places-to-visit__chip:hover {
+  border-color: var(--color-border-strong);
+}
+
+.places-to-visit__chip--active {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.places-to-visit__chip:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

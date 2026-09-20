@@ -1,0 +1,56 @@
+/*
+  Floating WhatsApp button — fixed to the bottom-right corner of the
+  homepage only (see pages/Home/index.jsx). Deliberately restrained:
+  no pulse/glow/flash animation, no chat-window popup, no badge or
+  text label — just a quiet, always-available circular affordance,
+  visually separate from the header's own "Call Now" button (top
+  bar, not bottom-right) so the two are never mistaken for each other.
+*/
+.whatsapp-button {
+  position: fixed;
+  /* env(...) covers the phone's own safe-area inset (notch/home-bar
+     devices); the space-* token is the resting margin from the
+     viewport edge on every other device. Together they mean the
+     button never sits flush against — or is clipped by — the edge. */
+  right: max(var(--space-5), calc(var(--space-5) + env(safe-area-inset-right, 0px)));
+  bottom: max(var(--space-5), calc(var(--space-5) + env(safe-area-inset-bottom, 0px)));
+  z-index: var(--z-header);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #0a6b3d;
+  color: #ffffff;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+/* A small, static lift — not a pulse or bounce — same restrained
+   hover language as the rest of the site's primary buttons. */
+@media (prefers-reduced-motion: no-preference) {
+  .whatsapp-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.whatsapp-button:active {
+  transform: translateY(0);
+}
+
+.whatsapp-button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .whatsapp-button {
+    width: 40px;
+    height: 40px;
+  }
+}

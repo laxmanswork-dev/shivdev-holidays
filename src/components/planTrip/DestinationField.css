@@ -1,0 +1,99 @@
+/*
+  A "From"/"To" field for the trip planner. The dropdown reuses
+  .destination-search__panel and its child classes verbatim (see
+  DestinationSearch.css).
+*/
+
+.trip-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.trip-field__label {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: var(--weight-medium);
+  color: var(--pt-label);
+}
+
+.trip-field__field {
+  position: relative;
+}
+
+/* Input controls stay pure white — one clear step lighter than the
+   form's own ice-blue card background (see PlanTrip.css) — so the
+   page → card → input hierarchy actually reads at a glance. */
+.trip-field__input-wrap {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--pt-border);
+  background: var(--color-surface);
+  overflow: hidden;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.trip-field__input-wrap:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.trip-field__input-wrap--error {
+  border-color: var(--color-error);
+}
+
+.trip-field__input {
+  display: block;
+  width: 100%;
+  height: 52px;
+  padding-inline: var(--space-4);
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.trip-field__input::placeholder {
+  color: var(--color-text-muted);
+  font-weight: var(--weight-regular);
+}
+
+.trip-field__input:focus-visible,
+.trip-field__input:focus {
+  outline: none;
+}
+
+/* Sits directly on the form's dark card (see PlanTrip.css), not
+   inside the white input box above it — lightened toward white
+   rather than a hardcoded new hex, so it stays tied to the same
+   --color-error the rest of the site uses. */
+.trip-field__error {
+  margin: 0;
+  font-family: var(--font-body);
+  /* 14px (--text-label), not the 13px caption: validation feedback the
+     visitor needs to read. */
+  font-size: var(--text-label);
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--color-error) 55%, white);
+}
+
+/* Reposition the shared results panel to sit directly under this
+   field (it defaults to the navbar trigger's own top-right anchor —
+   see DestinationSearch.css). */
+.trip-field__dropdown.destination-search__panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  width: auto;
+}
+
+@media (max-width: 480px) {
+  .trip-field__dropdown.destination-search__panel {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}

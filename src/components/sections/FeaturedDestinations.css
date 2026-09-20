@@ -1,0 +1,256 @@
+/*
+  Featured Destinations — a homepage "signature collection" preview,
+  not a shrunk-down version of the /destinations catalogue. No card
+  chrome (no border, no background box, no shadow) — a tall
+  photograph and a plain caption directly on the section's own
+  canvas, closer to an editorial spread than a UI component grid.
+*/
+
+/* Overrides Section's own --content-measure cap (meant for a single
+   prose column) so the 4-across grid can use the section's full
+   container width; the eyebrow/heading/lede above it stay naturally
+   left-aligned and don't need the cap either at this width. */
+.featured-destinations__section-content {
+  max-width: none;
+}
+
+/* The section still needs to read as one screen, not a scroll — so
+   this stays well short of Section's own generous default padding —
+   but a little real breathing room above "Featured Destinations" and
+   below the last row of cards reads as "premium, composed" rather
+   than "cropped tight to fit". */
+#destinations.section--viewport-full .section__content {
+  padding-block: calc(var(--header-height) + var(--space-4)) var(--space-7);
+}
+
+/* The section's own header row — eyebrow/heading/lede on the left,
+   the "Explore Full Destinations" link on the right, vertically
+   centered against that whole text block. This is the CTA's only
+   home now; it no longer sits under the card grid. */
+.featured-destinations__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  /* Section's own content wrapper uses align-items: flex-start (a
+     left-aligned section shrinks its children to their own content
+     width by default) — without this, the row itself shrinks to fit
+     the intro text and space-between has no extra width left to push
+     the CTA into, leaving it stranded right next to the heading
+     instead of at the container's actual right edge. */
+  width: 100%;
+  /* Description → cards: the most important gap in the section, per
+     the brief — enough that the intro clearly finishes before the
+     showcase begins, rather than the cards feeling glued on. */
+  margin-bottom: var(--space-7);
+}
+
+.featured-destinations__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* The heading is now a full sentence (it replaced a 4-word title and
+   the subtitle under it), so it gets a measure cap and balanced
+   wrapping — it breaks into two even lines on desktop and wraps
+   naturally on smaller screens, never crowding the CTA beside it. */
+.featured-destinations__intro .heading-xl {
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+/* A quiet editorial link (Button's own .btn--text variant), not a
+   solid button — "part of the layout", not a competing UI element.
+   Never wraps or gets squeezed by the heading next to it. */
+.featured-destinations__cta-link {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.featured-destinations__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+.featured-destination {
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-destination__media-link {
+  display: block;
+  cursor: pointer;
+}
+
+.featured-destination__caption {
+  display: flex;
+  flex-direction: column;
+  /* Grows to fill the tile so the meta row below can sit at the bottom
+     — keeps every tile's divider/duration/button aligned even when one
+     tile's title or description wraps onto an extra line. */
+  flex: 1 1 auto;
+  gap: var(--space-3);
+  padding-block: var(--space-3) var(--space-1);
+}
+
+.featured-destination__category {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.featured-destination__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.featured-destination__description {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text-muted);
+}
+
+.featured-destination__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.featured-destination__duration {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+/* Now the shared <Button variant="secondary" size="sm"> (see
+   FeaturedDestinations.jsx) rather than plain text — a real,
+   always-visible outlined button, consistent with the identical
+   treatment on /destinations (DestinationCard.css). This override
+   just tightens its padding a touch for the compact meta row;
+   color/border/hover fill all come from Button.css's own
+   .btn--secondary, untouched. */
+.featured-destination__link.btn--sm {
+  padding-inline: var(--space-3);
+}
+
+.featured-destination__link svg {
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.featured-destination__link:hover svg {
+  transform: translateX(3px);
+}
+
+/* Hover affordance for the whole tile (hovering anywhere over it,
+   not just the button, still lifts the photo — mouse-only, since
+   .featured-destination is a plain div now, not a single link; the
+   explicit Button below is what keyboard/screen-reader users use).
+   No card box appears (kept deliberately chrome-free per the note at
+   the top of this file); instead the photo itself lifts with a soft
+   shadow, the same restrained treatment DestinationCard.css uses on
+   /destinations. */
+.featured-destination .destination-image {
+  transition:
+    transform var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+/* The whole tile lifts 4px (same as the cards on /destinations) and the
+   photo picks up a light shadow. */
+.featured-destination {
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .featured-destination:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.featured-destination:hover .destination-image {
+  box-shadow: var(--shadow-md);
+}
+
+/* Keyboard focus: same shadow plus a ring on the photo while the tile's
+   Plan This Trip button has keyboard focus. */
+.featured-destination:has(:focus-visible) .destination-image {
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+@media (max-width: 1024px) {
+  /* "Keep them on one row if there's enough space; otherwise place
+     the CTA below the heading but above the cards" — below this
+     width the heading + link no longer comfortably share a row, so
+     the header stacks (DOM order already puts the link after the
+     intro text and before the grid, so this alone gets the right
+     order for free). */
+  .featured-destinations__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .featured-destinations__grid {
+    /* A capped column width (not 1fr) — at this breakpoint the
+       container is wide but the viewport is short, so letting each
+       card stretch to half the container would make the images (and
+       so the whole section) much taller than at the 4-across desktop
+       layout, working against the one-screen goal. */
+    grid-template-columns: repeat(2, minmax(0, 320px));
+    justify-content: center;
+    row-gap: var(--space-5);
+  }
+}
+
+@media (max-width: 640px) {
+  .featured-destinations__grid {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-6);
+  }
+}
+
+/* Phones: the long sentence at the full heading-xl size stacks into
+   4–5 lines; a slightly smaller size keeps it to about 3. */
+@media (max-width: 640px) {
+  .featured-destinations__intro .heading-xl {
+    font-size: 1.875rem;
+    max-width: none;
+  }
+}
+
+/* The small "Featured Destinations" label: a step up in size (13px →
+   15px) and nudged up 10px on its own — a relative offset, so the
+   heading and cards below it don't move. */
+.featured-destinations__intro .eyebrow {
+  font-size: 0.9375rem;
+  font-weight: var(--weight-bold);
+  position: relative;
+  top: -10px;
+}
+
+/* Pure black text in this section: the heading, card names, card
+   descriptions and durations. The blue labels and the buttons keep
+   their own colors. */
+#destinations .featured-destinations__intro .heading-xl,
+#destinations .featured-destination__name,
+#destinations .featured-destination__description,
+#destinations .featured-destination__duration {
+  color: #000000;
+}

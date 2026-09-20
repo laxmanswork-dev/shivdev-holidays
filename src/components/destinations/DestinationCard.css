@@ -1,0 +1,199 @@
+/*
+  One card design, used for every destination on the page — image,
+  name, short description, duration, action. Same white surface,
+  --radius-lg corners, hairline border and restrained shadow as the
+  rest of the site. No per-destination size/weight variants: the whole
+  point is that every card in the grid lines up row to row, whether or
+  not a real photo exists yet for that destination (see DestinationImage).
+
+  The separate `--compact` tier below is not a smaller version of this
+  card — it's a distinct, image-less text row, used only for the
+  low-priority "More Places We Can Take You" list.
+*/
+
+/* A soft resting shadow (tinted navy, matching --shadow-md's own
+   tint below, rather than flat black) gives the card real depth
+   against the page even before it's hovered — hover then deepens
+   into the stronger --shadow-md rather than introducing a shadow
+   from nothing. */
+.destination-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(10, 20, 40, 0.05);
+  transition:
+    transform var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .destination-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-strong);
+  }
+}
+
+/* Keyboard focus: the card itself shows a clear ring while its Plan
+   This Trip button (or any link inside) has keyboard focus — :has()
+   with :focus-visible so a mouse click doesn't leave it lit. */
+.destination-card:not(.destination-card--compact):has(:focus-visible) {
+  border-color: var(--color-primary);
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.destination-card__media-link {
+  display: block;
+  cursor: pointer;
+}
+
+.destination-card .destination-image {
+  border-radius: 0;
+}
+
+/* flex: 1 1 auto is the actual row-alignment fix: the grid
+   (.destinations-page__grid) already stretches every card in a row
+   to the tallest card's height (CSS Grid's default align-items:
+   stretch) — but until now nothing inside the card used that extra
+   height, so a short description just left blank space after the
+   footer instead of the footer sinking to the card's true bottom
+   edge. Letting body grow to fill it, combined with the footer's own
+   margin-top: auto below, pins the footer/button to the same Y
+   position across every card in the row regardless of description
+   length — with no line-clamping, no fixed heights, and no per-card
+   overrides, so it holds for all 61 destinations automatically. On
+   mobile's single-column layout each card is the only item in its
+   own grid row, so there's nothing to stretch against and cards keep
+   their natural, content-driven height exactly as before. */
+.destination-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+/* No image frame above the body on this one card (see
+   DestinationCard.jsx's imageMissing) — even out the top padding to
+   match the sides/bottom instead of leaving the smaller gap that
+   assumes a photo sits flush above it. */
+.destination-card--no-image .destination-card__body {
+  padding-top: var(--space-5);
+}
+
+.destination-card__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-heading-sm);
+  color: var(--color-text);
+}
+
+.destination-card__description {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text-muted);
+}
+
+.destination-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  /* auto, not a fixed --space-3: consumes whatever slack body's own
+     flex-grow above leaves (at least --space-3, per the padding-top
+     below), pinning this row to the card's bottom edge instead of
+     sitting immediately after a variable-length description. */
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.destination-card__duration {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+/* Now the shared <Button variant="secondary" size="sm"> (see
+   DestinationCard.jsx) rather than a plain text link — a real,
+   always-visible outlined button for click confidence, consistent
+   with every other secondary action on the site (e.g. "Explore Full
+   Destinations" above this grid). This override just tightens its
+   padding a touch for the compact footer row; color/border/hover
+   fill all come from Button.css's own .btn--secondary, untouched. */
+.destination-card__link.btn--sm {
+  padding-inline: var(--space-3);
+}
+
+.destination-card__link svg {
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.destination-card__link:hover svg {
+  transform: translateX(3px);
+}
+
+/* ---------- Compact tier ----------
+   No card chrome, no image — a dense, scannable row. This is what
+   keeps the "More Places We Can Take You" list from feeling like more
+   of the same wall of cards above it. */
+.destination-card--compact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.destination-card--compact:hover {
+  background: var(--color-background-alt);
+  border-color: var(--color-border-strong);
+}
+
+.destination-card__compact-name {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.destination-card__compact-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.destination-card__compact-meta .destination-card__duration {
+  color: var(--color-text-muted);
+}
+
+.destination-card--compact:hover .destination-card__compact-meta svg {
+  transform: translateX(2px);
+}
+
+.destination-card--compact .destination-card__compact-meta svg {
+  transition: transform var(--duration-fast) var(--ease-standard);
+}

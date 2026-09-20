@@ -1,0 +1,239 @@
+/*
+  Contact — a two-column section: contact content left (label,
+  heading, description, a large clickable phone number, Plan Your
+  Trip + Book via WhatsApp), a supporting photograph right — same
+  two-column grid pattern as .about-how-promo elsewhere on this page.
+
+  Deliberately NOT viewport="full": that forces a min-height of one
+  full viewport regardless of content, which is right for the hero/
+  destinations sections but was wrong here — this section's content
+  is short (like About's own two rows above it, which use the same
+  spacing="none" + own padding-block approach instead), so forcing
+  full-viewport height just produced a large amount of empty space
+  above and below it with no way to fix that through padding or
+  alignment tweaks alone. Sized to its own content instead, like
+  .about-intro-section / .about-how-section.
+*/
+
+.contact-section {
+  padding-block: var(--space-9) var(--space-10);
+}
+
+.contact-content {
+  /* The shared base .section__content rule caps width at
+     --content-measure (46rem) — a single-column editorial reading
+     measure, not enough room for a real two-column grid. .about-two-
+     col and .about-how-promo already override this the same way for
+     their own two-column rows elsewhere on this page. */
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 40rem);
+  align-items: center;
+  /* The shared base rule (.section__content in Section.css) puts a
+     16px gap between every child sitewide — same override the hero
+     already uses (#home .section__content { gap: 0; ... }) to get
+     the real column gap instead (matching .about-how-promo's own
+     gap elsewhere on this page). */
+  gap: var(--space-9);
+}
+
+.contact-content__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.contact-content__right {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Slightly larger than the shared .eyebrow's own font-size — kept
+   scoped to this class rather than touching .eyebrow itself, which
+   would resize every eyebrow sitewide — color and letter-spacing
+   still come from .eyebrow unchanged. */
+.contact-content__label {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: var(--weight-bold);
+}
+
+.contact-content__heading {
+  margin-top: 1.75rem; /* 28px */
+  /* Controlled width so the (now smaller, heading-lg) headline wraps
+     onto a deliberate second line instead of stretching the full
+     column width — same text-wrap: balance technique already used
+     for the hero's own H1 (see Section.css). */
+  max-width: 26rem;
+  text-wrap: balance;
+}
+
+/* A comfortable reading width rather than the full section — same
+   idea as the hero's own .hero-description cap (see Section.css),
+   just a little wider since this sits under a normal heading-xl
+   rather than a large display H1. */
+.contact-content__description {
+  margin-top: var(--space-6); /* 32px */
+  max-width: 38rem;
+}
+
+/* A prominent, clickable phone number — larger and bolder than
+   normal body text so it reads as a real contact action on its own,
+   not just a caption above the buttons. */
+.contact-content__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: var(--space-6); /* 32px */
+  font-family: var(--font-body);
+  font-size: var(--text-heading-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.contact-content__phone:hover {
+  color: var(--color-primary-hover);
+}
+
+.contact-content__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4); /* 16px between the two buttons */
+  margin-top: 2.25rem; /* 36px */
+}
+
+/* A small size bump for the two booking buttons beyond the shared
+   .btn--md — a touch taller/wider than every other size="md" button
+   sitewide, without jumping all the way to .btn--lg (which would
+   also bump the font-size, a bigger visual change than intended
+   here). */
+.contact-content__actions .btn {
+  min-height: 52px;
+  padding-inline: var(--space-6);
+}
+
+/* "Book via WhatsApp" — a solid WhatsApp-green fill at rest (not
+   just on hover) so it reads as "this one goes to WhatsApp" at a
+   glance, matching Call Now's own solid-fill treatment. Deepens
+   slightly on hover, same direction as every other primary-style
+   button on the site (see Button.css's own :hover rules) rather than
+   brightening. The smooth transition already comes from the shared
+   .btn rule in Button.css. */
+.contact-content__whatsapp-btn {
+  background: #0a6b3d;
+  border-color: #0a6b3d;
+  color: #ffffff;
+}
+
+.contact-content__whatsapp-btn:hover {
+  background: #085530;
+  border-color: #085530;
+  color: #ffffff;
+}
+
+/* Below this width the two buttons no longer comfortably fit on one
+   row — stack them instead of letting them wrap into a ragged,
+   unequal-width pair. */
+@media (max-width: 480px) {
+  .contact-content__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .contact-content__actions .btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Supporting photograph (right column) ----------
+   No card chrome — just the photo itself, sized/positioned so the
+   absolutely-positioned <img> and placeholder inside have something
+   to size against. The box's own aspect-ratio matches the source
+   photo's real proportions (a 3:2 landscape, 1536x1024) as closely as
+   CSS aspect-ratio allows, so object-fit: contain below has
+   essentially nothing to letterbox — the complete photo (the person,
+   the car, the background, exactly as shot) fills the frame edge to
+   edge, never cropped. If the photo file is ever replaced with one of
+   different proportions, update the aspect-ratio below to match.
+
+   A soft radial glow (ice-blue fading to white) sits behind the
+   photo — invisible where the opaque image covers it, but showing
+   through as a gentle atmospheric halo in the thin margin around it
+   (see .contact-visual-image__img's own inset below — a plain
+   `padding` on this element wouldn't do it, since an absolutely
+   positioned child's containing block is the padding BOX, not the
+   content box, so it ignores padding entirely), so the photo's own
+   edges blend into the page instead of ending on a hard, flat white
+   rectangle. The outer container's own max-width/aspect-ratio
+   footprint is unchanged. */
+.contact-visual-image {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  aspect-ratio: 3 / 2;
+  background: radial-gradient(ellipse at center, var(--color-background-alt) 0%, var(--color-white) 78%);
+}
+
+.contact-visual-image__img {
+  position: absolute;
+  /* Explicit calc(), not just `inset: 10px` — a replaced element
+     (like <img>) that's absolutely positioned with width/height:auto
+     sizes itself from its own intrinsic dimensions in that case, not
+     by filling the gap between the insets, so the 10px margin
+     wouldn't actually apply. Spelling the size out directly avoids
+     that. */
+  top: 10px;
+  left: 10px;
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  /* contain — guarantees the full photo always stays visible and
+     uncropped, whatever the exact source file's own dimensions. */
+  object-fit: contain;
+  object-position: center;
+  /* Softly rounded corners (--radius-lg, 14px — the same as the site's
+     cards and the About photo), to sit with the rounded buttons. */
+  border-radius: var(--radius-lg);
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-standard);
+}
+
+.contact-visual-image__img--visible {
+  opacity: 1;
+}
+
+.contact-visual-image__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-border-strong);
+}
+
+@media (max-width: 1024px) {
+  .contact-content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+    gap: var(--space-6);
+  }
+}
+
+/* Stacked from 860px down (was 720px): the photo is a wide landscape,
+   so beside the text on a tablet it would be squeezed to ~350px; below
+   the text it can run up to 560px wide. */
+@media (max-width: 860px) {
+  .contact-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .contact-visual-image {
+    max-width: 560px;
+  }
+}
