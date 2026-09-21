@@ -9,3 +9,9 @@ leftover uploads from an earlier attempt at full-bleed section
 background photos on the homepage and the Destinations page (since
 removed). Safe to delete; nothing will break either way since the app
 never reads them.
+
+`logo-road-mask.png` is also used by the code: it is the 480x480 "road map" of
+the logo that lets the first-visit intro (`src/components/intro`) animate only the
+black road inside `shivdev-holidays-logo.png`. It is generated from the logo — if the
+logo artwork ever changes, re-run `scripts/generate-logo-road-mask.cjs` (instructions at
+the top of that file).

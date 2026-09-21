@@ -28,6 +28,30 @@
          component tree renders the <video> element. Path must match
          HeroVideo's poster prop in pages/Home/index.jsx exactly. -->
     <link rel="preload" as="image" href="/videos/car-poster.jpg" fetchpriority="high" />
+    <!-- First-visit logo intro (src/components/intro): when it is about to
+         play, paint the page white from the very first frame so there is no
+         ice-blue flash before React mounts the overlay. Same rules as
+         src/components/intro/introSession.js — keep them in sync. The
+         class is removed by the app; the timeout is only a safety net so a
+         failed script load can never leave the page held. -->
+    <style>html.intro-pending{background:#fff}</style>
+    <script>
+      try {
+        var c = navigator.connection;
+        if (
+          location.pathname === '/' &&
+          !location.hash &&
+          !sessionStorage.getItem('shivdev:intro-seen') &&
+          !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+          !(c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType)))
+        ) {
+          document.documentElement.className += ' intro-pending';
+          setTimeout(function () {
+            document.documentElement.classList.remove('intro-pending');
+          }, 6000);
+        }
+      } catch (e) {}
+    </script>
     <title>Shivdev Holidays — Cab & Travel Planning in Kanyakumari</title>
   </head>
   <body>

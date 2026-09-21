@@ -7,6 +7,7 @@ import { HeroVideo } from '../../components/common/HeroVideo';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
 import { HeroTripSearch } from '../../components/sections/HeroTripSearch';
 import { FeaturedDestinations } from '../../components/sections/FeaturedDestinations';
+import { IntroOverlay } from '../../components/intro/IntroOverlay';
 import { AboutPromoImage } from './AboutPromoImage';
 import { ContactVisual } from './ContactVisual';
 import { useScrollToHashOnMount } from '../../hooks/useScrollToHashOnMount';
@@ -66,6 +67,7 @@ export default function Home() {
 
   return (
     <>
+      <IntroOverlay />
       <SEO path="/" structuredData={[organizationSchema(), localBusinessSchema()]} />
 
       {/* position: fixed, so placement in the DOM tree doesn't matter
