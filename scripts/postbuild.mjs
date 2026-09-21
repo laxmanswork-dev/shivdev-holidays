@@ -124,6 +124,8 @@ try {
   if (!scriptHashes.length || !styleHashes.length) throw new Error('expected inline <script> and <style> blocks in index.html');
 
   const headers = (await readFile(path.join(ROOT, 'scripts', 'headers.template'), 'utf8'))
+    // Always LF, even when Git checked the template out with CRLF (Windows).
+    .replace(/\r\n/g, '\n')
     .replace('{{SCRIPT_HASHES}}', scriptHashes.join(' '))
     .replace('{{STYLE_HASHES}}', styleHashes.join(' '));
   await writeFile(path.join(DIST, '_headers'), headers, 'utf8');

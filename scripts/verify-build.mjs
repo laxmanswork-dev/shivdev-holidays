@@ -94,6 +94,7 @@ try {
   const headersRaw = names.has('_headers') ? await readFile(path.join(DIST, '_headers'), 'utf8') : '';
   // Comment lines (#) explain the rules; only the real rules are checked.
   const headers = headersRaw
+    .replace(/\r\n/g, '\n')
     .split('\n')
     .filter((l) => !l.trim().startsWith('#'))
     .join('\n');
