@@ -74,6 +74,10 @@
    halo — so the active state reads as "this field", not just
    "something changed". */
 .hero-trip-search__field:focus-within {
+  /* A solid white ring: the field sits over the dark hero video, where the
+     translucent blue ring below is too faint to see (WCAG 2.4.7 / 1.4.11). */
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
   border-color: color-mix(in srgb, var(--color-hero-accent) 55%, transparent);
   box-shadow:
     0 0 0 3px color-mix(in srgb, var(--color-hero-accent) 45%, transparent),

@@ -11,6 +11,9 @@ function toAbsoluteUrl(url) {
  * Resolves the final metadata values for a page by merging
  * page-level overrides on top of site-wide defaults.
  *
+ * A page marked `noindex` (the 404) gets no canonical URL or og:url: it
+ * must not be presented as the canonical version of any address.
+ *
  * @param {Object} options
  * @param {string} [options.title]
  * @param {string} [options.description]
@@ -23,11 +26,16 @@ export function resolveSeo({ title, description, path = '/', image, noindex = fa
     ? site.seo.titleTemplate.replace('%s', title)
     : site.seo.defaultTitle;
 
+  const usesDefaultImage = !image;
+
   return {
     title: resolvedTitle,
+    siteName: site.name,
     description: description || site.seo.defaultDescription,
-    canonical: buildCanonical(path),
+    canonical: noindex ? null : buildCanonical(path),
     image: toAbsoluteUrl(image || site.seo.defaultImage),
+    // Only the default share image has known dimensions.
+    imageSize: usesDefaultImage ? site.seo.defaultImageSize : null,
     robots: noindex ? 'noindex, nofollow' : 'index, follow',
   };
 }

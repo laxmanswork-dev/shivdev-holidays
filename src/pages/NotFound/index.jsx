@@ -6,7 +6,7 @@ import { Container } from '../../components/common/Container';
 export default function NotFound() {
   return (
     <div className="page-ice-bg">
-      <SEO title="Page Not Found" path="/404" noindex />
+      <SEO title="Page Not Found" noindex />
       <Container className="page-placeholder">
         <h1 className="heading-xl">Page not found</h1>
         <p className="body">

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import './HeroVideo.css';
 
 /**
@@ -49,14 +50,20 @@ import './HeroVideo.css';
  * @param {Object} props
  * @param {string} props.src - H.264 MP4 source (required, tried first).
  * @param {string} [props.webmSrc] - Optional WebM source, the backup if MP4 can't play.
+ * @param {string} [props.mobileSrc] - smaller H.264 MP4 for phones (below 768px), so a
+ *   phone never downloads the full-size desktop clip; falls back to "src" if omitted.
+ * @param {string} [props.mobileWebmSrc] - the WebM backup for phones.
  * @param {string} [props.poster]
  */
 // navigator.connection.effectiveType values slow enough that a multi-MB
 // background video would just compete with the page for bandwidth.
 const SLOW_CONNECTION_TYPES = ['slow-2g', '2g', '3g'];
 
-export function HeroVideo({ src, webmSrc, poster }) {
+export function HeroVideo({ src, webmSrc, mobileSrc, mobileWebmSrc, poster }) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const isPhone = useMediaQuery('(max-width: 767px)');
+  const mp4 = isPhone && mobileSrc ? mobileSrc : src;
+  const webm = isPhone && mobileSrc ? mobileWebmSrc : webmSrc;
   // navigator.connection is Chromium-only — every other browser just
   // gets `false` here (the video plays as normal), which is the
   // correct fallback since there's no signal to act on.
@@ -90,7 +97,7 @@ export function HeroVideo({ src, webmSrc, poster }) {
       video.removeEventListener('error', handleError);
       clearTimeout(timer);
     };
-  }, [skipVideo]);
+  }, [skipVideo, mp4]);
 
   if (skipVideo || broken) {
     // No video: show the poster frame as a static image (same fit,
@@ -108,6 +115,9 @@ export function HeroVideo({ src, webmSrc, poster }) {
   return (
     <div className="hero-video" aria-hidden="true">
       <video
+        // A different file for phones vs larger screens: remount if the
+        // viewport crosses the breakpoint (e.g. rotating a tablet).
+        key={mp4}
         ref={videoRef}
         className="hero-video__el"
         poster={poster}
@@ -115,11 +125,11 @@ export function HeroVideo({ src, webmSrc, poster }) {
         muted
         loop
         playsInline
-        preload="auto"
+        preload={isPhone ? 'metadata' : 'auto'}
         fetchPriority="high"
       >
-        <source src={src} type="video/mp4" />
-        {webmSrc && <source src={webmSrc} type="video/webm" />}
+        <source src={mp4} type="video/mp4" />
+        {webm && <source src={webm} type="video/webm" />}
       </video>
       <div className="hero-video__scrim" />
     </div>

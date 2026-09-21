@@ -2,13 +2,18 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { SEO } from '../../seo/SEO';
-import { touristDestinationSchema, breadcrumbListSchema } from '../../seo/structuredData';
+import { destinationSeoProps } from '../../seo/routeMeta';
 import { Container } from '../../components/common/Container';
 import { Button } from '../../components/common/Button';
 import { DestinationImage } from '../../components/destinations/DestinationImage';
 import { getDestinationDetail } from '../../data/destinationDetail';
 import NotFound from '../NotFound';
 import './Destination.css';
+
+// How wide the photo is drawn, so the browser picks the smallest sufficient
+// file: full content width on phones, about half the page beside the text on
+// tablets and up (capped at the desktop column width).
+const DETAIL_IMAGE_SIZES = '(max-width: 767px) calc(100vw - 40px), (max-width: 1099px) 46vw, 620px';
 
 /**
  * Single-destination page. Works for every destination in the search
@@ -35,28 +40,11 @@ export default function Destination() {
   }
 
   const useNearby = Boolean(destination.fallbackImage) && ownImageFailedFor === destination.slug;
-  const path = `/destinations/${destination.slug}`;
   const planTripHref = `/plan-your-trip?destination=${destination.slug}`;
 
   return (
     <div className="page-ice-bg">
-      <SEO
-        title={destination.seoTitle}
-        description={destination.seoDescription}
-        path={path}
-        structuredData={[
-          touristDestinationSchema({
-            name: destination.name,
-            description: destination.shortDescription,
-            path,
-          }),
-          breadcrumbListSchema([
-            { name: 'Home', path: '/' },
-            { name: 'Destinations', path: '/destinations' },
-            { name: destination.name, path },
-          ]),
-        ]}
-      />
+      <SEO {...destinationSeoProps(destination)} />
       <Container
         className={`page-placeholder destination-detail${imageMissingFor === destination.slug ? ' destination-detail--no-media' : ''}`}
       >
@@ -67,6 +55,10 @@ export default function Destination() {
               src={useNearby ? destination.fallbackImage : destination.image}
               alt={useNearby ? `${destination.fallbackImageLabel}, near ${destination.name}` : destination.name}
               size="card"
+              // This photo is the first thing on the page — fetch it right away
+              // instead of waiting for lazy-loading to decide it's near the screen.
+              priority
+              sizes={DETAIL_IMAGE_SIZES}
               onError={() =>
                 destination.fallbackImage && !useNearby
                   ? setOwnImageFailedFor(destination.slug)

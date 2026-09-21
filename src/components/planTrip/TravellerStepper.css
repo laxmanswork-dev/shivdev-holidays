@@ -22,6 +22,14 @@
   overflow: hidden;
 }
 
+/* Same solid white ring as the other fields on the form's dark card (see
+   DestinationField.css) — the number box inside only tints its background
+   on focus, which is too faint to see on its own (WCAG 2.4.7 / 1.4.11). */
+.traveller-stepper__control:focus-within {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
 .traveller-stepper__button {
   display: inline-flex;
   align-items: center;

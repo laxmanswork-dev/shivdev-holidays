@@ -4,39 +4,42 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/images/brand/shivdev-favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <!-- No static <meta name="description"> here on purpose: every
-         route already renders its own <SEO> component (see
-         src/seo/SEO.jsx), which sets a page-specific description via
-         react-helmet-async — including this exact same text as the
-         fallback for any page that doesn't pass its own (see
-         data/site.js's seo.defaultDescription). A static tag here
-         would sit ALONGSIDE Helmet's, not replace it — Helmet only
-         manages tags it renders itself, so a duplicate name="description"
-         already in the static HTML doesn't get removed. The result:
-         two competing <meta name="description"> tags per page, with
-         crawlers/tools reading document order likely picking this
-         static, non-page-specific one over the intended per-page
-         text (this genuinely happened during a production audit —
-         every route showed the same description despite each page
-         passing its own). -->
     <meta name="theme-color" content="#0a1428" />
-    <!-- The hero video's poster is the page's LCP candidate, but as a
-         client-rendered SPA there's no server HTML for it to appear
-         in until React mounts — this preload hint is what actually
-         makes the browser start fetching it immediately, in parallel
-         with JS downloading/parsing, instead of only after Home's
-         component tree renders the <video> element. Path must match
-         HeroVideo's poster prop in pages/Home/index.jsx exactly. -->
-    <link rel="preload" as="image" href="/videos/car-poster.jpg" fetchpriority="high" />
-    <!-- First-visit logo intro (src/components/intro): when it is about to
-         play, paint the page white from the very first frame so there is no
-         ice-blue flash before React mounts the overlay. Same rules as
-         src/components/intro/introSession.js — keep them in sync. The
-         class is removed by the app; the timeout is only a safety net so a
-         failed script load can never leave the page held. -->
-    <style>html.intro-pending{background:#fff}</style>
+    <!-- Page metadata (description, canonical, Open Graph, Twitter, JSON-LD) is
+         NOT written here. The build (scripts/postbuild.mjs) writes it into each
+         route's static HTML file from the same code that the <SEO> component
+         renders at runtime (src/seo), so link previews and crawlers that don't
+         run JavaScript still get the right tags for every page. Each of those
+         static tag carries data-rh="true"; src/seo/SEO.jsx removes those once
+         React has rendered its own copies — no duplicates. -->
+
+    <!-- Inline, so it runs before anything is painted. Kept as one small block
+         (its SHA-256 is added to the Content-Security-Policy at build time by
+         scripts/postbuild.mjs — edit it and run `npm run build` again).
+
+         1. First-visit logo intro (src/components/intro): when it is about to
+            play, paint the page white from the very first frame so there is no
+            ice-blue flash before React mounts the overlay. Same rules as
+            src/components/intro/introSession.js — keep them in sync. The class
+            is removed by the app; the timeout is only a safety net so a failed
+            script load can never leave the page held.
+         2. Homepage only: preload the hero video's poster, which is the page's
+            LCP candidate. As a client-rendered SPA the browser can't discover it
+            until React mounts, so this starts the download immediately, in
+            parallel with the JavaScript. It is added by script (not a static
+            <link>) so the other routes don't download an image they never show.
+            The path must match HeroVideo's poster prop in pages/Home/index.jsx. -->
+    <style>html.intro-pending{background:#fff}.noscript-note{font-family:Arial,sans-serif;max-width:34rem;margin:3rem auto;padding:0 1rem;line-height:1.6;color:#10243d}</style>
     <script>
       try {
+        if (location.pathname === '/') {
+          var p = document.createElement('link');
+          p.rel = 'preload';
+          p.as = 'image';
+          p.href = '/videos/car-poster.jpg';
+          p.setAttribute('fetchpriority', 'high');
+          document.head.appendChild(p);
+        }
         var c = navigator.connection;
         if (
           location.pathname === '/' &&
@@ -57,7 +60,7 @@
   <body>
     <div id="root"></div>
     <noscript>
-      <p style="font-family: Arial, sans-serif; max-width: 34rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.6; color: #10243d">
+      <p class="noscript-note">
         <strong>Shivdev Holidays</strong> — cab &amp; travel planning in Kanyakumari.<br />
         This website needs JavaScript to show its pages. To book a cab or plan a trip, call
         <a href="tel:+919072300823">+91 90723 00823</a> or message us on

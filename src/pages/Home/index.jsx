@@ -84,6 +84,8 @@ export default function Home() {
           <HeroVideo
             src="/videos/car.mp4"
             webmSrc="/videos/car.webm"
+            mobileSrc="/videos/car-mobile.mp4"
+            mobileWebmSrc="/videos/car-mobile.webm"
             poster="/videos/car-poster.jpg"
           />
         }

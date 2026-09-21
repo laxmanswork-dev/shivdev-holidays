@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { SEO } from '../../seo/SEO';
-import { breadcrumbListSchema } from '../../seo/structuredData';
+import { destinationsSeoProps } from '../../seo/routeMeta';
 import { Section } from '../../components/common/Section';
 import { Button } from '../../components/common/Button';
 import { DestinationCard } from '../../components/destinations/DestinationCard';
@@ -47,15 +47,7 @@ export default function Destinations() {
 
   return (
     <>
-      <SEO
-        title="Destinations"
-        description="Explore destinations across Tamil Nadu and Kerala with Shivdev Holidays. Plan local visits, outstation journeys and comfortable cab travel from Kanyakumari."
-        path="/destinations"
-        structuredData={breadcrumbListSchema([
-          { name: 'Home', path: '/' },
-          { name: 'Destinations', path: '/destinations' },
-        ])}
-      />
+      <SEO {...destinationsSeoProps()} />
 
       <Section
         id="destinations-intro"

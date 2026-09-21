@@ -74,7 +74,9 @@ export const site = {
     defaultTitle: 'Shivdev Holidays — Cab & Travel Planning in Kanyakumari',
     defaultDescription:
       'Plan your Kanyakumari trip with Shivdev Holidays. Cab travel, ready-made journeys, and custom routes across Tamil Nadu.',
-    defaultImage: '/images/brand/shivdev-holidays-logo.png',
+    // 1200x630 share-preview image (WhatsApp, Facebook, X) — see public/images/brand/og-share.jpg.
+    defaultImage: '/images/brand/og-share.jpg',
+    defaultImageSize: { width: 1200, height: 630 },
     twitterHandle: '',
   },
 };

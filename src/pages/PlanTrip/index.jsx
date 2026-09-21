@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Phone } from 'lucide-react';
 import { SEO } from '../../seo/SEO';
-import { serviceSchema, breadcrumbListSchema } from '../../seo/structuredData';
+import { planTripSeoProps } from '../../seo/routeMeta';
 import { Section } from '../../components/common/Section';
 import { Button } from '../../components/common/Button';
 import { DestinationField } from '../../components/planTrip/DestinationField';
@@ -234,23 +234,7 @@ export default function PlanTrip() {
 
   return (
     <>
-      <SEO
-        title="Plan Your Trip"
-        description="Plan local and outstation cab trips from Kanyakumari across Tamil Nadu and South India with Shivdev Holidays."
-        path="/plan-your-trip"
-        structuredData={[
-          serviceSchema({
-            name: 'Trip Planning',
-            description:
-              'Plan a cab trip from Kanyakumari across Tamil Nadu and South India with Shivdev Holidays.',
-            path: '/plan-your-trip',
-          }),
-          breadcrumbListSchema([
-            { name: 'Home', path: '/' },
-            { name: 'Plan Your Trip', path: '/plan-your-trip' },
-          ]),
-        ]}
-      />
+      <SEO {...planTripSeoProps()} />
 
       <Section id="plan-trip-intro" background="surface" spacing="compact" ariaLabel="Plan your trip">
         <p className="eyebrow">Plan Your Trip</p>

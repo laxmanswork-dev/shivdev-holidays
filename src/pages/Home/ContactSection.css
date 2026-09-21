@@ -117,7 +117,10 @@
   padding-inline: var(--space-6);
 }
 
-/* "Book via WhatsApp" — a solid WhatsApp-green fill at rest (not
+/* "Book via WhatsApp" — the recognisable WhatsApp green (#25d366), with the
+   site's dark navy for the label and icon rather than white: white on this
+   green is only 1.98:1 (WCAG AA needs 4.5:1), navy on it is about 7.9:1 (and
+   about 5.1:1 on the darker hover green). A solid WhatsApp-green fill at rest (not
    just on hover) so it reads as "this one goes to WhatsApp" at a
    glance, matching Call Now's own solid-fill treatment. Deepens
    slightly on hover, same direction as every other primary-style
@@ -127,13 +130,13 @@
 .contact-content__whatsapp-btn {
   background: #25d366;
   border-color: #25d366;
-  color: #ffffff;
+  color: var(--color-navy);
 }
 
 .contact-content__whatsapp-btn:hover {
   background: #1ea952;
   border-color: #1ea952;
-  color: #ffffff;
+  color: var(--color-navy);
 }
 
 /* Below this width the two buttons no longer comfortably fit on one

@@ -30,7 +30,8 @@
 
 /* Sizes */
 .btn--sm {
-  min-height: 40px;
+  /* 44px: the minimum comfortable touch target. */
+  min-height: 44px;
   padding-inline: var(--space-4);
   font-size: var(--text-label);
 }

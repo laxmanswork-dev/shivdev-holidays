@@ -35,6 +35,11 @@
 }
 
 .trip-field__input-wrap:focus-within {
+  /* These fields sit on the form's dark navy card, where a blue border and a
+     faint blue ring are invisible — a solid white ring, offset from the field,
+     is clearly visible there (WCAG 2.4.7 / 1.4.11). */
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
 }

@@ -3,11 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "vite build",
+    "postbuild": "node scripts/postbuild.mjs",
+    "verify": "node scripts/verify-build.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
+    "images": "node scripts/optimize-images.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

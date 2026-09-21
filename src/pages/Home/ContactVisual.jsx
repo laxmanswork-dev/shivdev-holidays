@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { brandPhoto } from '../../utils/photoSources';
 
-const PHOTO_SRC = '/images/brand/contact.png';
+// Responsive WebP files generated from source-images/brand/contact.png
+// (see scripts/optimize-images.cjs). Drawn at most ~620px wide.
+const PHOTO = brandPhoto('contact');
+const PHOTO_SIZES = '(min-width: 1025px) 620px, calc(100vw - 40px)';
 
 /**
  * The Contact section's right-side photo — a supporting brand visual
  * next to the contact introduction, not a decorative filler. Same
  * "never a broken-image glyph" approach as AboutPromoImage/
  * DestinationImage: a neutral placeholder shows until the real file
- * exists at PHOTO_SRC, so the layout has a properly sized frame to
+ * exists, so the layout has a properly sized frame to
  * align against even before/if the photo fails to load.
  *
  * object-fit: contain (not cover) — the box's own aspect-ratio is
@@ -25,9 +29,12 @@ export function ContactVisual() {
     <div className="contact-visual-image">
       {!failed && (
         <img
-          src={PHOTO_SRC}
+          src={PHOTO.src}
+          srcSet={PHOTO.srcSet}
+          sizes={PHOTO_SIZES}
           alt="Shivdev Holidays cab"
           loading="lazy"
+          decoding="async"
           className={cn('contact-visual-image__img', loaded && 'contact-visual-image__img--visible')}
           onLoad={() => setLoaded(true)}
           onError={() => setFailed(true)}

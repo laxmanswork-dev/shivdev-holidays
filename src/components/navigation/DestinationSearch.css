@@ -18,7 +18,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  height: 40px;
+  height: 44px;
+  /* 44px wide too when it shrinks to the icon-only button on phones. */
+  min-width: 44px;
   padding: 0 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-header-search-border);
@@ -171,6 +173,12 @@
 .destination-search__result:hover,
 .destination-search__result--active {
   background: var(--color-background-alt);
+}
+
+/* The arrow-key selection also gets a solid bar: the background tint alone is
+   about 1.1:1 against white, too faint to follow by keyboard (WCAG 1.4.11). */
+.destination-search__result--active {
+  box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 .destination-search__result-name {

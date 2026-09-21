@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { User } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { brandPhoto } from '../../utils/photoSources';
 
-const PHOTO_SRC = '/images/brand/laxman.png';
+// Responsive WebP files generated from source-images/brand/laxman.png
+// (see scripts/optimize-images.cjs). Drawn at most ~1240px wide.
+const PHOTO = brandPhoto('laxman');
+const PHOTO_SIZES = '(min-width: 1280px) 1240px, calc(100vw - 40px)';
 
 /**
  * The About section's photo frame. Same "never a broken-image glyph"
  * approach as DestinationImage: a neutral placeholder shows until the
  * real file exists at PHOTO_SRC, so the two-column layout this sits
  * in has a properly sized, balanced frame to align against even
- * before a real photo exists. Once the photo is dropped in at that
- * exact path (public/images/brand/laxman.png), this needs no code
- * change — it just appears.
+ * before a real photo exists. To change the photo, replace
+ * source-images/brand/laxman.png and run `npm run images`.
  */
 export function AboutPromoImage() {
   const [loaded, setLoaded] = useState(false);
@@ -22,9 +25,12 @@ export function AboutPromoImage() {
       <div className="about-promo-image">
         {!failed && (
           <img
-            src={PHOTO_SRC}
+            src={PHOTO.src}
+            srcSet={PHOTO.srcSet}
+            sizes={PHOTO_SIZES}
             alt="Shivdev Holidays"
             loading="lazy"
+            decoding="async"
             className={cn('about-promo-image__img', loaded && 'about-promo-image__img--visible')}
             onLoad={() => setLoaded(true)}
             onError={() => setFailed(true)}

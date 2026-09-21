@@ -1,11 +1,21 @@
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { resolveSeo } from './seoConfig';
+import { buildHeadTags } from './headTags';
 
 /**
  * Drop-in SEO component. Handles title, meta description, canonical
  * URL, robots, Open Graph, and Twitter card metadata for one page.
  * Pass `structuredData` (a JSON-LD object, or an array of them) to
  * inject schema — only when it genuinely matches the page content.
+ *
+ * The tags themselves come from buildHeadTags() (headTags.js), the same
+ * builder the build uses to write each route's static HTML (scripts/
+ * postbuild.mjs), so crawlers that don't run JavaScript get the same tags.
+ * Those static copies are marked data-rh="true"; with React 19, Helmet's
+ * own tags are rendered by React and are NOT marked, so once React has
+ * rendered its own set the static ones are removed here — otherwise every
+ * page would carry two descriptions, two canonicals and so on.
  *
  * @param {Object} props
  * @param {string} [props.title] - page title; combined with the site template
@@ -17,6 +27,10 @@ import { resolveSeo } from './seoConfig';
  */
 export function SEO({ title, description, path, image, noindex, structuredData }) {
   const seo = resolveSeo({ title, description, path, image, noindex });
+
+  useEffect(() => {
+    document.head.querySelectorAll('[data-rh]').forEach((element) => element.remove());
+  }, []);
   const schemas = structuredData
     ? Array.isArray(structuredData)
       ? structuredData
@@ -26,20 +40,9 @@ export function SEO({ title, description, path, image, noindex, structuredData }
   return (
     <Helmet>
       <title>{seo.title}</title>
-      <meta name="description" content={seo.description} />
-      <link rel="canonical" href={seo.canonical} />
-      <meta name="robots" content={seo.robots} />
-
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content={seo.title} />
-      <meta property="og:description" content={seo.description} />
-      <meta property="og:url" content={seo.canonical} />
-      <meta property="og:image" content={seo.image} />
-
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={seo.title} />
-      <meta name="twitter:description" content={seo.description} />
-      <meta name="twitter:image" content={seo.image} />
+      {buildHeadTags(seo).map(({ tag: Tag, attrs }) => (
+        <Tag key={`${attrs.name ?? attrs.property ?? attrs.rel}`} {...attrs} />
+      ))}
 
       {schemas.map((schema, index) => (
         <script key={index} type="application/ld+json">

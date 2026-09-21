@@ -160,18 +160,26 @@ export function IntroOverlay() {
   const canvasRef = useRef(null);
   const roadRef = useRef(null);
 
-  // While the intro is up: hold the hero text back (see IntroOverlay.css) and
-  // stop wheel/touch scrolling from moving the page behind it.
+  // While the intro is up: hold the hero text back (see IntroOverlay.css), keep
+  // the page behind it out of reach (inert: no keyboard focus, no clicks, not
+  // read out by screen readers — it is fully covered anyway), and stop
+  // wheel/touch scrolling from moving it.
   useEffect(() => {
     if (phase !== 'play') return undefined;
     introPlan.started = true;
     document.documentElement.classList.add('intro-pending');
+
+    const root = document.getElementById('root');
+    if (root) root.inert = true;
 
     const overlay = overlayRef.current;
     const stop = (event) => event.preventDefault();
     overlay?.addEventListener('wheel', stop, { passive: false });
     overlay?.addEventListener('touchmove', stop, { passive: false });
     return () => {
+      // Runs when the exit begins (phase leaves 'play'): the page is usable
+      // again straight away, while the white is still fading.
+      if (root) root.inert = false;
       overlay?.removeEventListener('wheel', stop);
       overlay?.removeEventListener('touchmove', stop);
     };
@@ -274,7 +282,8 @@ export function IntroOverlay() {
     <div
       ref={overlayRef}
       className={cn('intro', ready && 'intro--ready', phase === 'exit' && 'intro--exit')}
-      aria-hidden="true"
+      role="img"
+      aria-label="Shivdev Holidays"
     >
       <div className="intro__lockup">
         <canvas ref={canvasRef} className="intro__logo" width="240" height="240" />
