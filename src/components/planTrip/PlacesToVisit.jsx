@@ -19,12 +19,7 @@ import './PlacesToVisit.css';
  */
 export function PlacesToVisit({ place, selected, onToggle }) {
   if (!place) {
-    return (
-      <div className="places-to-visit">
-        <h2 className="places-to-visit__heading">What would you like to see?</h2>
-        <p className="places-to-visit__hint">Choose a destination above to see suggested places.</p>
-      </div>
-    );
+    return null;
   }
 
   const suggestedDuration = getBySlug(place.slug)?.duration;
