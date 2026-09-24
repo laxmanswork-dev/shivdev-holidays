@@ -237,10 +237,13 @@ export default function PlanTrip() {
       <SEO {...planTripSeoProps()} />
 
       <Section id="plan-trip-intro" background="surface" spacing="compact" ariaLabel="Plan your trip">
-        <p className="eyebrow">Plan Your Trip</p>
-        <h1 className="heading-lg plan-trip__intro-line">
-          Tell us where you want to go and we&rsquo;ll help plan the journey around you.
-        </h1>
+        {/* The intro line was removed on request. A visible page still needs
+            exactly one real <h1> for accessibility/SEO, so "Plan Your Trip"
+            (previously just a small eyebrow label) is promoted to that role —
+            same restrained eyebrow styling, just the correct semantic tag
+            now that it's the only heading here (same pattern as the
+            Destinations page's own heading). */}
+        <h1 className="eyebrow">Plan Your Trip</h1>
       </Section>
 
       <Section

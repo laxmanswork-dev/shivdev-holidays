@@ -71,15 +71,6 @@
   font-weight: var(--weight-bold);
 }
 
-/* The page's main heading (h1): the intro sentence itself, at the
-   heading-lg size — it's a full sentence, so it wraps to two balanced
-   lines within the reading measure rather than running at the larger
-   heading-xl size. */
-.plan-trip__intro-line {
-  max-width: var(--content-measure);
-  text-wrap: balance;
-}
-
 /* This section's grid needs the container's full width, same reason
    Destinations.css caps/uncaps its own grids. */
 .plan-trip__section-content {
