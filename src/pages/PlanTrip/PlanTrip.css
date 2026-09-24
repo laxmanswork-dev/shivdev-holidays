@@ -141,11 +141,6 @@
   border-top: 1px solid var(--color-border-inverse);
 }
 
-.plan-trip__optional {
-  font-weight: var(--weight-regular);
-  color: var(--color-text-inverse-subtle);
-}
-
 .trip-field__textarea {
   height: auto;
   padding-block: var(--space-3);

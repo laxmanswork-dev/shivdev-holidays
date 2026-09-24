@@ -53,7 +53,6 @@ export default function PlanTrip() {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [notes, setNotes] = useState('');
 
   const [errors, setErrors] = useState({});
@@ -165,16 +164,15 @@ export default function PlanTrip() {
   // time it's called (handleSubmit calls this fresh on each submit,
   // never from stale/cached state) — *bold* below is WhatsApp's own
   // markdown syntax, rendered as real bold once the message arrives
-  // in the chat. Each optional section (email, return date, places,
-  // notes) is only included when the visitor actually provided it —
-  // never an "undefined"/"null"/empty line.
+  // in the chat. Each optional section (return date, places, notes) is
+  // only included when the visitor actually provided it — never an
+  // "undefined"/"null"/empty line.
   function buildMessage() {
     const lines = ['Hello Shivdev Holidays! I would like to request this trip.', ''];
 
     lines.push('*CUSTOMER DETAILS*');
     lines.push(`Name: ${name.trim()}`);
     lines.push(`Phone: ${phone.trim()}`);
-    if (email.trim()) lines.push(`Email: ${email.trim()}`);
     lines.push('');
 
     lines.push('*TRIP DETAILS*');
@@ -441,22 +439,6 @@ export default function PlanTrip() {
                           {errors.phone}
                         </p>
                       )}
-                    </div>
-                  </div>
-
-                  <div className="trip-field">
-                    <label className="trip-field__label" htmlFor="email">
-                      Email <span className="plan-trip__optional">(optional)</span>
-                    </label>
-                    <div className="trip-field__input-wrap">
-                      <input
-                        id="email"
-                        type="email"
-                        className="trip-field__input"
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                        autoComplete="email"
-                      />
                     </div>
                   </div>
 
