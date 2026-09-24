@@ -92,7 +92,10 @@
 
 .plan-trip__form {
   min-width: 0;
-  padding: var(--space-6);
+  /* A touch roomier than the standard --space-6 card padding — this
+     card holds the whole booking form, so it reads better with a
+     little more breathing room around its edges. */
+  padding: var(--space-8);
   border-radius: var(--radius-sm);
   border: 1px solid var(--pt-border);
   background: var(--pt-card-bg);
@@ -107,7 +110,7 @@
 
 @media (max-width: 480px) {
   .plan-trip__form {
-    padding: var(--space-5) var(--space-4);
+    padding: var(--space-7) var(--space-6);
   }
 }
 
