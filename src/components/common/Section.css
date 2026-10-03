@@ -270,14 +270,14 @@
 /* Phones (540px and narrower): the fluid size above shrinks the heading
    to 20–27px so both lines fit on one line each — which made the H1
    SMALLER than the section H2s below it (28–30px). Here it holds a
-   fixed 2.125rem (34px), clearly the largest heading, and each line
+   fixed size (reduced further on request, 34px → 28px) and each line
    may wrap naturally instead: "Dream. Explore." / "Discover." and
    "Your Journey" / "Begins Here." (balanced, so no lone-word orphans).
    Above 540px the lines fit unwrapped and the rule above is unchanged.
    Tablet and desktop sizes are untouched. */
 @media (max-width: 540px) {
   #home .hero-heading {
-    font-size: 2.125rem;
+    font-size: 1.75rem;
   }
 
   #home .hero-heading__line {
