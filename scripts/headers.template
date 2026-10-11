@@ -38,8 +38,18 @@
 /videos/*
   Cache-Control: public, max-age=604800
 
+# robots.txt and sitemap.xml are plain-text/XML files with no scripts or
+# subresources of their own, so the page Content-Security-Policy above does
+# not apply to them and is explicitly removed (Cloudflare's "! Header-Name"
+# syntax). Left in place, that CSP blocks the browser's own internal
+# script+stylesheet that renders sitemap.xml as a collapsible, syntax-
+# highlighted XML tree — without it, the browser falls back to dumping
+# every text node inline with no line breaks, which is indistinguishable
+# from a corrupt file even though the XML itself is perfectly valid.
 /robots.txt
+  ! Content-Security-Policy
   Cache-Control: public, max-age=3600
 
 /sitemap.xml
+  ! Content-Security-Policy
   Cache-Control: public, max-age=3600
