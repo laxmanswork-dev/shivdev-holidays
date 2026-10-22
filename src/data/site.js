@@ -40,6 +40,13 @@ export const site = {
     youtube: '',
   },
 
+  // The exact Google Maps listing for "Shivdev holidays" in Kanyakumari
+  // (verified by following this short link's redirect: it resolves to
+  // Shivdev holidays at 8.1193381, 77.5230156). Single source of truth
+  // for the homepage's Google rating row (components/common/
+  // GoogleRatingBadge.jsx) — never hardcode this URL elsewhere.
+  googleMapsUrl: 'https://maps.app.goo.gl/bpT4mZXg55k3NQ7Z8',
+
   serviceAreas: [
     'Kanyakumari',
     'Nagercoil',

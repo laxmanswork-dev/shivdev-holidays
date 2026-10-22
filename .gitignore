@@ -25,3 +25,7 @@ dist-ssr
 
 # Cloudflare Wrangler local state
 .wrangler
+
+# Local-only secrets for `wrangler dev` (see .dev.vars.example) — never commit
+# the real file, only the .example template with no values filled in.
+.dev.vars

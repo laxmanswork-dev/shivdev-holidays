@@ -2,11 +2,27 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "shivdev-holidays",
   "compatibility_date": "2026-09-20",
+  // The Worker exists only to call the Google Places API server-side (see
+  // src/worker/index.mjs and docs/google-rating.md) — the "binding": "ASSETS"
+  // line is what lets that script forward every non-API request straight to
+  // the static site, so SPA routing/the 404 fallback below are unaffected.
+  //
   // Single-page app: unknown paths get index.html and React Router renders
   // the routes and the 404 page. Do NOT add a "/* /index.html 200" rule in
   // public/_redirects - Cloudflare rejects it as an infinite loop.
+  "main": "src/worker/index.mjs",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
+  },
+  // GOOGLE_PLACE_ID is public (place IDs are not secret — they're printed
+  // in every Google Maps URL) and can live here in plain text once set.
+  // GOOGLE_PLACES_API_KEY must NEVER go in this file — it is a real secret
+  // and this file is committed to git. Set it with
+  // `wrangler secret put GOOGLE_PLACES_API_KEY` (or the Cloudflare
+  // dashboard) instead. See docs/google-rating.md.
+  "vars": {
+    "GOOGLE_PLACE_ID": ""
   }
 }

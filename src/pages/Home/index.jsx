@@ -4,6 +4,7 @@ import { organizationSchema, localBusinessSchema } from '../../seo/structuredDat
 import { Section } from '../../components/common/Section';
 import { Button } from '../../components/common/Button';
 import { HeroVideo } from '../../components/common/HeroVideo';
+import { GoogleRatingBadge } from '../../components/common/GoogleRatingBadge';
 import { WhatsAppButton } from '../../components/common/WhatsAppButton';
 import { HeroTripSearch } from '../../components/sections/HeroTripSearch';
 import { FeaturedDestinations } from '../../components/sections/FeaturedDestinations';
@@ -100,6 +101,7 @@ export default function Home() {
         <p className="body-lg hero-description">
           Kanyakumari &amp; Outstation Cab Services across Tamil Nadu and South India.
         </p>
+        <GoogleRatingBadge />
 
         <HeroTripSearch />
       </Section>

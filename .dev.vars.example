@@ -1,0 +1,9 @@
+# Local-only secrets for `wrangler dev` (see docs/google-rating.md).
+#
+# Copy this file to .dev.vars (gitignored, never committed) and fill in a
+# real key to test the live Google rating locally. Without it, `wrangler
+# dev` still runs fine — the rating API just reports "not configured" and
+# the homepage component falls back to a plain Google Maps link, exactly
+# as it will in production until these are set there too.
+
+GOOGLE_PLACES_API_KEY=

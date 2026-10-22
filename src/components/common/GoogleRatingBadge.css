@@ -1,0 +1,131 @@
+/*
+  The "4.8 ★★★★★ (128 reviews)" row under the hero subtitle. Sits directly
+  on the hero video with the same treatment the eyebrow/heading/subtitle
+  already use (--color-hero-text + the hero's own text-shadow) rather than
+  a translucent "glass" card — this site deliberately doesn't use glass/
+  frosted-panel effects elsewhere, so a boxed pill here would be a new,
+  inconsistent pattern rather than a natural extension of the hero.
+*/
+#home .google-rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 28px;
+  color: var(--color-hero-text);
+  text-shadow: 0 1px 3px rgba(3, 12, 22, 0.4);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+#home .google-rating-badge:hover,
+#home .google-rating-badge:focus-visible {
+  opacity: 0.85;
+}
+
+#home .google-rating-badge:focus-visible {
+  outline: 2px solid var(--color-focus-inverse);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.google-rating-badge__g {
+  flex-shrink: 0;
+  /* The "G" artwork itself is a white rounded square in Google's actual
+     lockup; a plain white chip here would disappear into the subtitle
+     text above it, so a very soft dark backing keeps it legible on
+     every video frame without becoming its own glass card. */
+  padding: 2px;
+  border-radius: 50%;
+  background: rgba(3, 12, 22, 0.28);
+}
+
+/* Two stacked star rows: a muted outline row (always shown) and a gold
+   filled row clipped to the live rating's percentage, laid directly on
+   top — the standard, lightweight way to show a fractional star rating
+   without a sprite image per possible value. */
+.google-rating-badge__stars {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.google-rating-badge__stars-track,
+.google-rating-badge__stars-fill {
+  display: flex;
+  gap: 1px;
+}
+
+.google-rating-badge__stars-track {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.google-rating-badge__stars-fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  /* Google's own star gold, not a token from the site's own palette —
+     this is specifically Google's brand color, not Shivdev's. */
+  color: #fbbc04;
+}
+
+.google-rating-badge__score {
+  flex-shrink: 0;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-inverse);
+}
+
+.google-rating-badge__count {
+  margin-left: 4px;
+  font-weight: var(--weight-regular);
+  color: var(--color-hero-text);
+}
+
+/* Reserves roughly the same width as "4.8 (128 reviews)" so the row
+   doesn't visibly jump in width once the real numbers arrive. */
+.google-rating-badge__skeleton {
+  flex-shrink: 0;
+  width: 7.5em;
+  height: 0.875em;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .google-rating-badge__skeleton {
+    animation: google-rating-badge-pulse 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes google-rating-badge-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.google-rating-badge__label {
+  /* The eyebrow/caption role here — same visual weight as the site's
+     other small uppercase hero labels, so it reads as "the source of
+     this rating" rather than more body copy. */
+  font-size: 0.75rem;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-hero-eyebrow);
+  white-space: nowrap;
+}
+
+@media (max-width: 540px) {
+  #home .google-rating-badge {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    margin-bottom: 24px;
+  }
+}
