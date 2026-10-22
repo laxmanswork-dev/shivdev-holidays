@@ -17,15 +17,17 @@ const RATING_ENDPOINT = '/api/google-rating';
  * are a progressive enhancement on top of that, never a requirement for
  * the row to be useful. Three states:
  *
- *   loading     — Google icon + label + empty stars + a skeleton
- *                 placeholder where the number will appear.
- *   ready       — the real rating, proportionally filled stars, and the
- *                 real review count, as returned by the Worker (which in
+ *   loading     — Google icon + label + five filled stars (decorative,
+ *                 not tied to a number yet) + a skeleton placeholder
+ *                 where the number will appear.
+ *   ready       — five filled stars, the real rating, and the real
+ *                 review count, as returned by the Worker (which in
  *                 turn only ever returns Google's own live data — see
  *                 src/worker/index.mjs; nothing here is hardcoded).
  *   unavailable — the API isn't configured yet, or the request failed:
- *                 empty stars, no number, no review count. Still a full,
- *                 working link — never a fabricated rating.
+ *                 five filled stars, no number, no review count. Still
+ *                 a full, working link — the stars are a fixed design
+ *                 element, never a stand-in for an invented rating.
  */
 export function GoogleRatingBadge() {
   const [state, setState] = useState({ status: 'loading', rating: null, userRatingCount: null });
@@ -51,7 +53,6 @@ export function GoogleRatingBadge() {
   }, []);
 
   const { status, rating, userRatingCount } = state;
-  const fillPercent = status === 'ready' ? Math.max(0, Math.min(100, (rating / 5) * 100)) : 0;
 
   const ariaLabel =
     status === 'ready'
@@ -70,18 +71,9 @@ export function GoogleRatingBadge() {
       <GoogleGIcon className="google-rating-badge__g" />
 
       <span className="google-rating-badge__stars" aria-hidden="true">
-        <span className="google-rating-badge__stars-track">
-          {STAR_INDEXES.map((i) => (
-            <Star key={i} size={14} strokeWidth={1.75} />
-          ))}
-        </span>
-        {status === 'ready' && (
-          <span className="google-rating-badge__stars-fill" style={{ width: `${fillPercent}%` }}>
-            {STAR_INDEXES.map((i) => (
-              <Star key={i} size={14} strokeWidth={1.75} fill="currentColor" />
-            ))}
-          </span>
-        )}
+        {STAR_INDEXES.map((i) => (
+          <Star key={i} size={14} strokeWidth={1.75} fill="currentColor" />
+        ))}
       </span>
 
       {status === 'ready' && (

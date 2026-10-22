@@ -42,34 +42,15 @@
   background: rgba(3, 12, 22, 0.28);
 }
 
-/* Two stacked star rows: a muted outline row (always shown) and a gold
-   filled row clipped to the live rating's percentage, laid directly on
-   top — the standard, lightweight way to show a fractional star rating
-   without a sprite image per possible value. */
+/* Five solid gold stars — a fixed decorative element (like any "Google
+   Reviews" badge's star row), not a proportional fill of the live
+   rating, so it never reads as "empty"/incomplete before the live
+   number has loaded or when it's unavailable. */
 .google-rating-badge__stars {
-  position: relative;
   display: inline-flex;
-  flex-shrink: 0;
-}
-
-.google-rating-badge__stars-track,
-.google-rating-badge__stars-fill {
-  display: flex;
   gap: 1px;
-}
-
-.google-rating-badge__stars-track {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.google-rating-badge__stars-fill {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  /* Google's own star gold, not a token from the site's own palette —
-     this is specifically Google's brand color, not Shivdev's. */
-  color: #fbbc04;
+  flex-shrink: 0;
+  color: #f5b82e;
 }
 
 .google-rating-badge__score {
