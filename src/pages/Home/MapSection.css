@@ -1,0 +1,52 @@
+/*
+  "Find Us on the Map" — the closing section, directly below Contact.
+  Centered text block (eyebrow, heading, intro line), a wide embedded
+  map, then a Get Directions button — same centered single-column
+  rhythm as .about-intro-section above it, not a new layout pattern.
+*/
+.map-content {
+  align-items: center;
+  text-align: center;
+}
+
+.map-content__intro {
+  margin-top: var(--space-3);
+  max-width: 34rem;
+  color: var(--color-text-muted);
+}
+
+/* Wide and short rather than square — a map reads better as a wide
+   strip here than a tall block. Rounded corners + a soft shadow, the
+   same card treatment (--radius-lg, --shadow-md) used for photos and
+   cards elsewhere on the site, so the embed doesn't look like a raw,
+   un-styled iframe dropped on the page. */
+.map-content__embed {
+  width: 100%;
+  max-width: 920px;
+  margin-top: var(--space-6);
+  aspect-ratio: 16 / 7;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: var(--color-background-alt);
+}
+
+.map-content__iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.map-content__directions {
+  margin-top: var(--space-6);
+}
+
+/* Below 640px the 16/7 strip gets uncomfortably short for the amount of
+   map detail visible — a little taller reads better on a narrow phone
+   screen without losing the "wide" framing on larger viewports. */
+@media (max-width: 640px) {
+  .map-content__embed {
+    aspect-ratio: 4 / 3;
+  }
+}

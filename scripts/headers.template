@@ -4,16 +4,17 @@
 #
 # Security headers apply to every response. The Content-Security-Policy
 # allows only this site's own files, plus the two small inline blocks in
-# index.html (allowed by their SHA-256 hash — no 'unsafe-inline'). The site
-# loads nothing from third parties: fonts, images, video and scripts are all
-# served from its own origin. WhatsApp and phone links are navigations, which
-# CSP does not restrict.
+# index.html (allowed by their SHA-256 hash — no 'unsafe-inline'), plus one
+# explicit exception: frame-src google.com, for the embedded Google Maps
+# location on the homepage (components/common iframe in pages/Home) — the
+# only third-party content this site loads. WhatsApp and phone links are
+# navigations, which CSP does not restrict.
 #
 # Strict-Transport-Security (HSTS) is deliberately NOT set here yet: it must
 # only be sent once the final HTTPS domain is confirmed, because browsers
 # remember it (see docs/deployment.md).
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' {{SCRIPT_HASHES}}; style-src 'self' {{STYLE_HASHES}}; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' {{SCRIPT_HASHES}}; style-src 'self' {{STYLE_HASHES}}; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; frame-src https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

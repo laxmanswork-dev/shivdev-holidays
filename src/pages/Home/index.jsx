@@ -1,4 +1,4 @@
-import { ArrowRight, Car, Route, Camera, Plane, Phone, MessageCircle } from 'lucide-react';
+import { ArrowRight, Car, Route, Camera, Plane, Phone, MessageCircle, MapPin } from 'lucide-react';
 import { SEO } from '../../seo/SEO';
 import { organizationSchema, localBusinessSchema } from '../../seo/structuredData';
 import { Section } from '../../components/common/Section';
@@ -16,6 +16,7 @@ import { site } from '../../data/site';
 import { toTelHref, toWhatsAppHref } from '../../utils/format';
 import './AboutSection.css';
 import './ContactSection.css';
+import './MapSection.css';
 
 // About section copy — small and static enough that it doesn't need
 // to live in data/, unlike the shared destination/site data. Moved
@@ -245,6 +246,43 @@ export default function Home() {
         <div className="contact-content__right">
           <ContactVisual />
         </div>
+      </Section>
+
+      <Section
+        id="map"
+        background="default"
+        aria-labelledby="map-heading"
+        className="map-section"
+        contentClassName="map-content"
+      >
+        <p className="eyebrow">Find Us</p>
+        <h2 id="map-heading" className="heading-lg">
+          Find Us on the Map
+        </h2>
+        <p className="body-lg map-content__intro">Visit us or get directions to our location.</p>
+
+        <div className="map-content__embed">
+          <iframe
+            className="map-content__iframe"
+            src="https://www.google.com/maps?q=8.1193381,77.5230156(Shivdev+holidays)&z=16&output=embed"
+            title={`${site.name} location on Google Maps`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+
+        <Button
+          href={site.googleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="primary"
+          size="md"
+          icon={MapPin}
+          iconPosition="left"
+          className="map-content__directions"
+        >
+          Get Directions
+        </Button>
       </Section>
     </>
   );
