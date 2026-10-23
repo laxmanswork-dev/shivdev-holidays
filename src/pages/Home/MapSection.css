@@ -3,40 +3,36 @@
   Centered text block (eyebrow, heading, intro line), a wide embedded
   map, then a Get Directions button — same centered single-column
   rhythm as .about-intro-section above it, not a new layout pattern.
-  Centering itself (align-items/text-align/margin-inline) comes from
-  the Section's own horizontal="center" prop (.section__content--h-
-  center in Section.css) — nothing extra needed here for that.
+
+  .map-content itself spans the full width of its container (see
+  max-width: none below) instead of this section__content's usual
+  46rem text measure — on its own this would stretch the heading/intro
+  too, but they have no explicit width, so align-items: center (from
+  horizontal="center") sizes each of them to its own natural/max-width
+  content width and centers it individually; only the embed below,
+  given an explicit wide width, actually grows to fill the space.
 */
+.map-content {
+  max-width: none;
+}
+
 .map-content__intro {
   margin-top: var(--space-3);
   max-width: 34rem;
   color: var(--color-text-muted);
 }
 
-/* Deliberately wider than this section's own text column (and wider
-   than .container's own 1320px cap) — a large, near-full-width map is
-   the whole point here, while the heading/intro above stay at a normal
-   reading width. The classic viewport-relative breakout: `left: 50%` +
-   `translateX(-50%)` centers on .map-content's own center line
-   regardless of this element's width, which lines up with the
-   viewport's center because every ancestor up to .container is itself
-   centered via margin-inline: auto — so this never needs to know its
-   parent's actual width. `width: 90vw` only, with nothing wider than
-   100vw, keeps body's `overflow-x: hidden` from ever having to clip
-   it. Fixed heights per breakpoint (not aspect-ratio) per the approved
+/* Deliberately wider than the heading/intro above it — a large,
+   near-full-width map is the point here. Centered by the parent's own
+   align-items: center (no position/transform tricks): since
+   .map-content now spans the full, viewport-centered container width,
+   centering an oversized flex item within it lands correctly on the
+   true page center through plain, standard flexbox cross-axis
+   alignment — nothing here can throw off touch hit-testing on a real
+   device the way a position: relative + transform stack might.
+   Fixed heights per breakpoint (not aspect-ratio) per the approved
    reference layout's proportions. */
 .map-content__embed {
-  /* Without this, the flex column's own align-items: center (from
-     horizontal="center") centers this oversized child within the
-     narrow 736px text column FIRST, and the left/transform breakout
-     below would then apply on top of that already-shifted position,
-     compounding into a large, wrong leftward offset. Pinning the
-     flex cross-axis start here makes the breakout math below operate
-     on the real, unshifted baseline. */
-  align-self: flex-start;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
   width: 90vw;
   max-width: 1400px;
   margin-top: var(--space-6);
