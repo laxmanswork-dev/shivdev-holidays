@@ -43,11 +43,11 @@
 }
 
 /* Two stacked star rows: a muted track (always rendered) and a gold
-   fill clipped to a percentage width on top. While the real rating is
-   unknown (loading/unavailable) the fill is forced to 100% so the row
-   reads as five solid gold stars, never "empty" — once the real
-   rating arrives the fill shrinks to match it exactly, so a 4.3 never
-   gets rounded up to look like a perfect 5. */
+   fill clipped to a percentage width on top. When there's no rating to
+   show (site.googleRating cleared) the fill is forced to 100% so the
+   row reads as five solid gold stars, never "empty" — with a real
+   value the fill matches it exactly, so a 4.3 never gets rounded up to
+   look like a perfect 5. */
 .google-rating-badge__stars {
   position: relative;
   display: inline-flex;
@@ -84,32 +84,6 @@
   margin-left: 4px;
   font-weight: var(--weight-regular);
   color: var(--color-hero-text);
-}
-
-/* Reserves roughly the same width as "4.8 (128 reviews)" so the row
-   doesn't visibly jump in width once the real numbers arrive. */
-.google-rating-badge__skeleton {
-  flex-shrink: 0;
-  width: 7.5em;
-  height: 0.875em;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.22);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .google-rating-badge__skeleton {
-    animation: google-rating-badge-pulse 1.4s ease-in-out infinite;
-  }
-}
-
-@keyframes google-rating-badge-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
 }
 
 .google-rating-badge__label {

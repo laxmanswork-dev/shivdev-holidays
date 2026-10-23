@@ -34,8 +34,9 @@ Original photos live in `source-images/` (not deployed). Add/replace a photo the
 then `npm install --no-save ffmpeg-static && npm run images`. See `docs/assets/`.
 
 ## Secrets / environment variables
-The site itself needs none. The homepage's live Google rating is the one
-feature with real config: `GOOGLE_PLACES_API_KEY` (a Cloudflare secret —
-`wrangler secret put GOOGLE_PLACES_API_KEY`) and `GOOGLE_PLACE_ID` (plain,
-in `wrangler.jsonc`'s `vars`). Until both are set, the rating row still
-works as a plain link with no live number. See `docs/google-rating.md`.
+None required. The homepage's Google rating row currently reads two
+manually-maintained numbers from `src/data/site.js` (`site.googleRating`)
+rather than any API — no Cloudflare secret, no API key, no billing. A
+live-data mode exists but is dormant (unused by the frontend) until
+someone sets up Google Cloud billing/an API key. See
+`docs/google-rating.md`.

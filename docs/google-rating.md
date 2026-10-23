@@ -1,16 +1,22 @@
-# Live Google rating on the homepage
+# Google rating on the homepage
 
-The hero shows a small "4.8 ★★★★★ (128 reviews)" row under the subtitle
+The hero shows a small "5.0 ★★★★★ (6 reviews)" row under the subtitle
 (`src/components/common/GoogleRatingBadge.jsx`), always linking to the
-business's real Google Maps listing. The rating/review count shown next to
-it is live data from the official Google Places API, fetched through a
-small Cloudflare Worker (`src/worker/index.mjs`) — never hardcoded, never
-fetched with an API key exposed to the browser.
+business's real Google listing.
 
-**Until the two values below are configured, the row still works** — it
-shows the Google icon, outline stars and a "Google Reviews" link to the
-exact same Maps listing, just without a live number. It will never show a
-fabricated rating.
+**Current mode: manually maintained.** This business doesn't have Google
+Cloud billing/API credentials set up, so the rating and review count are
+two plain numbers in `src/data/site.js` (`site.googleRating`), not
+fetched from any API. Nothing here claims to be live, real-time, or
+auto-updating — it's exactly as accurate as the last time someone
+checked the real listing and updated those two numbers. A fully-built
+live-data mode already exists and can be switched on later with no
+component changes — see "Optional: switch to live data later" below.
+
+If `site.googleRating` is ever set to `null`, the row still works — it
+shows the Google icon, five gold stars (decorative, since there's no
+number to represent), and a "Read Google Reviews" link to the same
+listing. It will never show an invented rating.
 
 ## 1. The verified business
 
@@ -33,31 +39,47 @@ read) and all three resolve to the same business:
   confirmation without an API key that every supplied link points at
   one single, consistent Google Business Profile, not three different
   or similarly-named listings.
-- **Supplied address (unverified by me — see below):** Anandhapuri,
-  North St, Kottaram, Tamil Nadu 629703, India.
-
-That confirms which business this is, but none of this is the Places
-API's own `place_id` format (`ChIJ...`) — getting that requires an API
-key (see below), so it's left for you to fill in. The identifiers above
-are a direct, independent way to double-check you've picked the right
-result in step 3. The formatted street address isn't exposed by a plain
-(non-JS, non-API) fetch of any of these links, so "Anandhapuri, North
-St, Kottaram" is recorded here as supplied, not independently confirmed
-by me — step 3's Place ID Finder result will show Google's own
-formatted address for direct comparison.
+- **Supplied address (unverified by me):** Anandhapuri, North St,
+  Kottaram, Tamil Nadu 629703, India. The formatted street address isn't
+  exposed by a plain (non-JS, non-API) fetch of any of these links, so
+  this is recorded as supplied, not independently confirmed.
 
 The most recently supplied link (`site.googleMapsUrl` in
 `src/data/site.js`) is what the badge links to — unchanged, exactly as
 given.
 
-## 2. Create a Google Cloud project and API key
+**The `5.0` / `6 reviews` currently in `site.googleRating`** were
+supplied directly by the business across several requests as the values
+shown on this listing. I have no way to independently verify a rating
+number without the API below, so this relies on whoever maintains the
+site checking the real listing periodically — see the comment next to
+`site.googleRating` for how to update it.
 
-This is a **paid Google API once past its free usage** — I haven't added
-a hidden cost, but you do need to decide to enable billing. The current
-pricing is on
+## Keeping it up to date
+
+Open the listing link above, check the rating and review count Google
+currently shows, and edit `site.googleRating.value` /
+`.reviewCount` / `.checkedOn` in `src/data/site.js` to match. Then
+rebuild and redeploy. There's no reminder system — it's manual by
+design (see "No Google Cloud billing or API credentials" in the brief
+this implements).
+
+## Optional: switch to live data later
+
+Everything below was already fully built and tested (in an earlier pass
+of this feature) and still exists in the repo — `src/worker/index.mjs`,
+`/api/google-rating`, `wrangler.jsonc`'s `GOOGLE_PLACE_ID` var. The
+frontend just doesn't call it right now. Switching back means (a) doing
+the steps below, and (b) having `GoogleRatingBadge.jsx` fetch
+`/api/google-rating` instead of reading `site.googleRating` — a small,
+contained change when that day comes.
+
+### 1. Create a Google Cloud project and API key
+
+This is a **paid Google API once past its free usage** — you'd need to
+decide to enable billing. Current pricing is on
 [Google Maps Platform's pricing page](https://mapsplatform.google.com/pricing/);
-check it yourself before enabling, since I can't guarantee it hasn't
-changed.
+check it yourself before enabling, since pricing can change.
 
 1. In [Google Cloud Console](https://console.cloud.google.com/), create or
    pick a project, then enable **Places API (New)**.
@@ -66,29 +88,29 @@ changed.
    - **API restrictions:** Places API (New) only.
    - **Application restrictions:** none needed — this key is only ever
      called from the Cloudflare Worker (a server), never from the
-     browser, so IP/referrer restriction isn't required for that reason;
-     restricting it to just Places API is what matters here.
+     browser.
 4. Enable billing on the project (required even to stay within any free
    monthly credit).
 
-## 3. Find the Place ID
+### 2. Find the Place ID
 
 1. Open Google's
-   [Place ID Finder](https://developers.google.com/maps/documentation/places/web-service/place-id#find-id).
+   [Place ID Finder](https://developers.google.com/maps/documentation/places/web-service/place-id#find-id)
+   (this tool itself needs an API key loaded into the page, from step 1).
 2. Search **"Shivdev holidays, Anandhapuri, North St, Kottaram, Tamil
-   Nadu 629703"** (or paste the coordinates from step 1:
+   Nadu 629703"** (or paste the coordinates from step 1 above:
    `8.1193381, 77.5230156`).
-3. Confirm the result's displayed address and coordinates match step 1
-   before copying its Place ID (`ChIJ...`) — the tool doesn't show the
-   CID/feature ID directly, so coordinates and the formatted address are
-   the cross-check here.
+3. Confirm the result's displayed address and coordinates match section 1
+   above before copying its Place ID (`ChIJ...`) — the tool doesn't show
+   the CID/feature ID directly, so coordinates and the formatted address
+   are the cross-check here.
 
-## 4. Configure the two values
+### 3. Configure the two values
 
 | Name | Value | Where it goes |
 |---|---|---|
-| `GOOGLE_PLACE_ID` | the `ChIJ...` ID from step 3 | `wrangler.jsonc`'s `vars` (not secret — place IDs are public, already visible in every Maps URL) |
-| `GOOGLE_PLACES_API_KEY` | the key from step 2 | **a Cloudflare secret — never this file, never git** |
+| `GOOGLE_PLACE_ID` | the `ChIJ...` ID from step 2 | `wrangler.jsonc`'s `vars` (not secret — place IDs are public, already visible in every Maps URL) |
+| `GOOGLE_PLACES_API_KEY` | the key from step 1 | **a Cloudflare secret — never this file, never git** |
 
 ```sh
 # one-time, real production key
@@ -100,77 +122,52 @@ npx wrangler secret put GOOGLE_PLACES_API_KEY
 → Variables → add `GOOGLE_PLACES_API_KEY` as **Encrypted**.)
 
 Then edit the empty `"GOOGLE_PLACE_ID": ""` in `wrangler.jsonc` to the real
-ID and deploy as usual (push to `main` — Cloudflare's existing Git
-integration builds and deploys it; nothing extra to run).
+ID, switch `GoogleRatingBadge.jsx` back to fetching `/api/google-rating`
+(see note above), and deploy as usual (push to `main`).
 
 **Local testing:** copy `.dev.vars.example` to `.dev.vars` (already
 gitignored) and fill in both values there, then `npx wrangler dev` to test
-the real Worker + API locally — `npm run dev` (plain Vite) never runs the
-Worker, so the badge will always show its link-only fallback there, which
-is correct, expected behavior, not a bug.
+the real Worker + API locally.
 
-## How it works
+### How the live path works (already built, currently unused)
 
-- **`src/worker/index.mjs`** is the only backend code in this project.
-  It answers `GET /api/google-rating`; every other request is handed
-  straight to the static site (`env.ASSETS.fetch`), so nothing about the
-  existing site's routing, 404 page, or headers changed.
+- **`src/worker/index.mjs`** answers `GET /api/google-rating`; every
+  other request is handed straight to the static site
+  (`env.ASSETS.fetch`), so nothing about the site's routing, 404 page,
+  or headers is affected by its presence.
 - It calls `GET https://places.googleapis.com/v1/places/{PLACE_ID}` with
   `X-Goog-FieldMask: id,displayName,rating,userRatingCount,googleMapsUri`
-  — a minimal field mask requesting only what's displayed, not every
-  available field.
-- **Caching:** the response is cached at Cloudflare's edge (`caches.default`
-  — no extra KV/D1 setup needed) for 6 hours by default
+  — a minimal field mask requesting only what's displayed.
+- **Caching:** the response is cached at Cloudflare's edge
+  (`caches.default` — no extra KV/D1 setup needed) for 6 hours by default
   (`GOOGLE_RATING_CACHE_SECONDS` in `wrangler.jsonc`'s `vars` to change
-  it), so the Places API is called at most a handful of times a day
-  regardless of traffic — never once per page view. A failed/unconfigured
-  response is cached for only 5 minutes, so a fix recovers quickly.
-- **Attribution/display:** the row always shows the Google "G" mark, the
-  words "Google Reviews", and links directly to the real Google Maps
-  listing — the standard way Places data is attributed back to Google.
-  The 6-hour cache is comfortably inside Google's Places API caching
-  policy limits; check the current
-  [Places API Policies](https://developers.google.com/maps/documentation/places/web-service/policies)
-  yourself if you ever raise the TTL significantly.
+  it), so the Places API would be called at most a handful of times a
+  day regardless of traffic. A failed/unconfigured response is cached
+  for only 5 minutes, so a fix recovers quickly.
 - **Security:** the API key only ever exists in the Worker's environment
   (a Cloudflare secret) and is never returned to the browser in any
   response, success or error.
-- **Frontend:** `src/components/common/GoogleRatingBadge.jsx` fetches
-  `/api/google-rating` on mount, again every 30 minutes while the tab
-  stays open, and once more if the tab regains focus after being hidden
-  for over 5 minutes. Three states: a brief loading skeleton, the live
-  rating once it arrives (stars filled in proportion to it — a 4.3
-  never rounds up to look like 5), or — if not configured, or the
-  request fails for any reason — a plain, fully functional link to the
-  same Google Maps listing with no number shown (stars stay fully gold
-  here as a fixed decorative element, since there's no rating being
-  claimed either way). It never displays a fabricated or stale-looking
-  value. None of this client-side polling adds load on Google: every
-  request still lands on the Worker's own edge cache first (above), so
-  Google is only ever re-queried once per cache window, however often
-  an open tab asks.
-- **"Write a review" link:** not added. A direct write-review deep link
-  needs the real Places `place_id` (`https://search.google.com/local/
-  writereview?placeid=ChIJ...`), which isn't available yet (see below) —
-  adding one now would mean guessing the URL, which the brief
-  specifically asked not to do. The existing Maps link already lets a
-  visitor open the listing and leave a review from there.
+- **"Write a review" link:** not added, even in the live path. A direct
+  write-review deep link needs the real Places `place_id`
+  (`https://search.google.com/local/writereview?placeid=ChIJ...`),
+  which isn't available without completing the steps above — the
+  existing Maps link already lets a visitor open the listing and leave
+  a review from there.
 
 ## Verified before this was written
 
-- The short link's redirect was followed live and resolves to "Shivdev
-  holidays" at the coordinates above — not assumed, not invented.
-- The full request/response path was tested against the **real** Google
-  Places API (New) endpoint with a deliberately invalid key: the Worker
-  correctly built the request, received a real `400` from Google, and
-  returned a safe, graceful error response with no key leakage.
-- The frontend was tested in a real browser (Playwright + the actual
-  Worker via `wrangler dev`): the link-only fallback state, the loading
-  skeleton, keyboard focus (`:focus-visible` ring), clicking through to
-  the exact correct Maps URL in a new tab, and an axe accessibility scan
-  (0 violations) of the hero section.
-- The "ready" (live-data) rendering path was verified by mocking the
-  network response in a test-only browser context — this proves the
-  component's rendering code is correct, but is **not** a substitute for
-  testing with a real key once one is configured. Please check the
-  homepage after setup to confirm the real number appears correctly.
+- Each supplied link's redirect was followed live and all three resolve
+  to "Shivdev holidays" at the same coordinates/CID/feature ID above —
+  not assumed, not invented.
+- The live-API Worker path (now dormant) was previously tested against
+  the **real** Google Places API (New) endpoint with a deliberately
+  invalid key: it correctly built the request, received a real `400`
+  from Google, and returned a safe, graceful error response with no key
+  leakage.
+- The current manual-value rendering (proportional star fill, the
+  `hasRating`/no-rating fallback, click-through to the listing) was
+  tested in a real browser (Playwright): with `site.googleRating` set
+  to the current `5.0`/`6` values, with a lower rating (to confirm the
+  stars visibly fall short of 5, not round up), and with it cleared to
+  `null` (confirming the plain-link fallback still works). `npm run
+  build` passes.

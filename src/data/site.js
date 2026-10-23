@@ -51,6 +51,34 @@ export const site = {
   // URL elsewhere. See docs/google-rating.md.
   googleMapsUrl: 'https://share.google/R9BVeSZjKv5uGRJl0',
 
+  // MANUALLY MAINTAINED — not fetched live. There's no Google Cloud
+  // billing/API key set up for this business yet, so the homepage's
+  // rating row (components/common/GoogleRatingBadge.jsx) just reads
+  // these two numbers directly instead of calling an API.
+  //
+  // To update: open the listing above, check the current rating/review
+  // count shown there, and edit the two values below to match — then
+  // rebuild and redeploy. There is no reminder system for this; it's on
+  // whoever maintains the site to check back periodically.
+  //
+  // Set this whole field to `null` if you'd rather not display a
+  // number at all — the row still works as a plain "Read Google
+  // Reviews" link either way (tested: see docs/google-rating.md).
+  //
+  // A real-time version of this (auto-fetched from the Google Places
+  // API, no manual editing ever needed again) already exists and is
+  // fully built — see docs/google-rating.md — it just needs a Google
+  // Cloud project, billing enabled, and an API key, none of which this
+  // business has set up yet. Switching to it later needs no component
+  // changes, only Cloudflare config.
+  googleRating: {
+    value: 5.0,
+    reviewCount: 6,
+    // The date this was last checked against the real listing above —
+    // update this alongside the two values whenever you do.
+    checkedOn: '2026-10-24',
+  },
+
   serviceAreas: [
     'Kanyakumari',
     'Nagercoil',

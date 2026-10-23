@@ -1,108 +1,33 @@
-import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { site } from '../../data/site';
 import './GoogleRatingBadge.css';
 
-// Same-origin API the Worker serves (src/worker/index.mjs) — never calls
-// Google directly from the browser, so no API key ever reaches the client.
-// Under plain `npm run dev` (no Worker running) this 404s, which the catch
-// block below treats exactly like "unavailable" — the row still renders as
-// a working link to Google Maps, just without live numbers.
-const RATING_ENDPOINT = '/api/google-rating';
-
-// How often an open tab re-asks the Worker for a fresh rating. Cheap to do
-// often: the Worker's own edge cache (src/worker/index.mjs,
-// GOOGLE_RATING_CACHE_SECONDS, 6h default) absorbs repeat requests, so this
-// interval only governs how quickly an open tab notices Google's cache
-// having rolled over — it never makes an extra call to Google itself.
-const REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
-// Don't bother re-fetching on every tab focus if the last fetch was recent.
-const REVALIDATE_MIN_GAP_MS = 5 * 60 * 1000; // 5 minutes
+const STAR_INDEXES = [0, 1, 2, 3, 4];
 
 /**
- * The small "4.8 ★★★★★ (128 reviews)" row under the hero subtitle.
- * Always a complete, working link to the business's real Google Maps
- * listing (site.googleMapsUrl) — the live rating/star-fill/review count
- * are a progressive enhancement on top of that, never a requirement for
- * the row to be useful. Three states:
+ * The small "5.0 ★★★★★ (6 reviews)" row under the hero subtitle. Always a
+ * complete, working link to the business's real Google listing
+ * (site.googleMapsUrl).
  *
- *   loading     — Google icon + label + five filled stars (decorative,
- *                 not tied to a number yet) + a skeleton placeholder
- *                 where the number will appear.
- *   ready       — the real rating, the real review count, and the
- *                 stars filled in proportion to that rating (so a 4.3
- *                 reads as noticeably short of 5 full stars, never
- *                 rounded up to look like a perfect score), as
- *                 returned by the Worker (which in turn only ever
- *                 returns Google's own live data — see
- *                 src/worker/index.mjs; nothing here is hardcoded).
- *   unavailable — the API isn't configured yet, or the request failed:
- *                 five filled stars, no number, no review count. Still
- *                 a full, working link — the stars are a fixed design
- *                 element here (there's no rating to be inaccurate
- *                 about), never a stand-in for an invented number.
+ * The rating/review count are **manually maintained**, not fetched live —
+ * see `site.googleRating` in src/data/site.js for the one place to update
+ * them, and docs/google-rating.md for why (no Google Cloud billing/API
+ * credentials for this business yet) and how to switch to the live-API
+ * path later without touching this component. Never describe these
+ * numbers as live/real-time/automatically-updated anywhere in this file.
  *
- * Refetches periodically and when the tab regains focus (see
- * REFRESH_INTERVAL_MS / REVALIDATE_MIN_GAP_MS above) so a rating change
- * on Google's side shows up here without a deploy — the Worker's own
- * edge cache is what actually bounds how often Google gets asked.
+ * If `site.googleRating` is ever cleared (set to null), this falls back
+ * to a plain "Read Google Reviews" link with no number — same principle
+ * as the live-data version before it: never show an invented rating.
  */
 export function GoogleRatingBadge() {
-  const [state, setState] = useState({ status: 'loading', rating: null, userRatingCount: null });
+  const rating = site.googleRating;
+  const hasRating = Boolean(rating) && typeof rating.value === 'number' && typeof rating.reviewCount === 'number';
+  const fillPercent = hasRating ? Math.max(0, Math.min(100, (rating.value / 5) * 100)) : 100;
 
-  useEffect(() => {
-    let lastFetchAt = 0;
-    let cancelled = false;
-    let controller = null;
-
-    const load = () => {
-      controller?.abort();
-      controller = new AbortController();
-      lastFetchAt = Date.now();
-
-      fetch(RATING_ENDPOINT, { signal: controller.signal })
-        .then((response) => (response.ok ? response.json() : Promise.reject(new Error('bad status'))))
-        .then((data) => {
-          if (cancelled) return;
-          if (data?.ok && data.configured && typeof data.rating === 'number' && typeof data.userRatingCount === 'number') {
-            setState({ status: 'ready', rating: data.rating, userRatingCount: data.userRatingCount });
-          } else {
-            setState({ status: 'unavailable', rating: null, userRatingCount: null });
-          }
-        })
-        .catch((error) => {
-          if (cancelled || error.name === 'AbortError') return;
-          setState({ status: 'unavailable', rating: null, userRatingCount: null });
-        });
-    };
-
-    load();
-    const intervalId = setInterval(load, REFRESH_INTERVAL_MS);
-
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && Date.now() - lastFetchAt > REVALIDATE_MIN_GAP_MS) {
-        load();
-      }
-    };
-    document.addEventListener('visibilitychange', onVisibilityChange);
-
-    return () => {
-      cancelled = true;
-      controller?.abort();
-      clearInterval(intervalId);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
-    };
-  }, []);
-
-  const { status, rating, userRatingCount } = state;
-  // Fully gold when there's no number to be accurate about (loading/
-  // unavailable); proportional to the real rating once it's known.
-  const fillPercent = status === 'ready' ? Math.max(0, Math.min(100, (rating / 5) * 100)) : 100;
-
-  const ariaLabel =
-    status === 'ready'
-      ? `${site.name}: ${rating.toFixed(1)} out of 5 on Google, from ${userRatingCount} review${userRatingCount === 1 ? '' : 's'}. Opens Google Maps in a new tab.`
-      : `Read ${site.name} reviews on Google Maps. Opens in a new tab.`;
+  const ariaLabel = hasRating
+    ? `${site.name}: ${rating.value.toFixed(1)} out of 5 on Google, from ${rating.reviewCount} review${rating.reviewCount === 1 ? '' : 's'}. Opens Google Maps in a new tab.`
+    : `Read ${site.name} reviews on Google Maps. Opens in a new tab.`;
 
   return (
     <a
@@ -128,22 +53,19 @@ export function GoogleRatingBadge() {
         </span>
       </span>
 
-      {status === 'ready' && (
+      {hasRating && (
         <span className="google-rating-badge__score">
-          {rating.toFixed(1)}
+          {rating.value.toFixed(1)}
           <span className="google-rating-badge__count">
-            ({userRatingCount.toLocaleString('en-IN')} review{userRatingCount === 1 ? '' : 's'})
+            ({rating.reviewCount.toLocaleString('en-IN')} review{rating.reviewCount === 1 ? '' : 's'})
           </span>
         </span>
       )}
-      {status === 'loading' && <span className="google-rating-badge__skeleton" aria-hidden="true" />}
 
-      <span className="google-rating-badge__label">Google Reviews</span>
+      <span className="google-rating-badge__label">{hasRating ? 'Google Reviews' : 'Read Google Reviews'}</span>
     </a>
   );
 }
-
-const STAR_INDEXES = [0, 1, 2, 3, 4];
 
 // A plain, generic four-color "G" mark — the same widely-used
 // representation of Google's brand colors seen on most "Google Reviews"
