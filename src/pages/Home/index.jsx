@@ -273,7 +273,7 @@ export default function Home() {
         </div>
 
         <Button
-          href={site.googleMapsUrl}
+          href={site.googleDirectionsUrl}
           target="_blank"
           rel="noopener noreferrer"
           variant="primary"

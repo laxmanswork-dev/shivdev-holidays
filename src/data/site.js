@@ -52,13 +52,31 @@ export const site = {
   // The business's official Google Business Profile link, as supplied.
   // Verified (no API key needed — following each redirect, never
   // scraped for rating data) to be the same "Shivdev holidays" entity
-  // as two earlier-supplied links: all three resolve to the identical
+  // as four earlier-supplied links: all resolve to the identical
   // Google Knowledge Graph feature ID /g/11zzhv6l2_ (CID
   // 0x3b04f3fb8f01f045:0x63a6f5d7e117d5a4, 8.1193381, 77.5230156).
   // Single source of truth for the homepage's Google rating row
   // (components/common/GoogleRatingBadge.jsx) — never hardcode this
   // URL elsewhere. See docs/google-rating.md.
-  googleMapsUrl: 'https://share.google/R9BVeSZjKv5uGRJl0',
+  //
+  // NOTE: this is a "share the listing" link — Google decides where it
+  // redirects (currently a Search results page showing the business's
+  // Knowledge Panel, not the Maps app/site), which is fine for "read
+  // our reviews" but wrong for a "Get Directions" action. That one
+  // uses googleDirectionsUrl below instead, not this field.
+  googleMapsUrl: 'https://share.google/FccNNmuFWqNMLwWT8',
+
+  // Google's own documented, API-key-free "Directions" URL scheme
+  // (https://developers.google.com/maps/documentation/urls/get-started#directions-action)
+  // — guaranteed to open the actual Google Maps app/site with this
+  // business's exact coordinates as the destination, never a Search
+  // results page. Used by the homepage's map section "Get Directions"
+  // button (pages/Home/index.jsx). Built from site.address's verified
+  // latitude/longitude, not hardcoded as a separate string, so it can
+  // never drift from the one verified location.
+  get googleDirectionsUrl() {
+    return `https://www.google.com/maps/dir/?api=1&destination=${this.address.latitude},${this.address.longitude}`;
+  },
 
   // MANUALLY MAINTAINED — not fetched live. There's no Google Cloud
   // billing/API key set up for this business yet, so the homepage's
