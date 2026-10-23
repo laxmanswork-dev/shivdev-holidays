@@ -42,14 +42,35 @@
   background: rgba(3, 12, 22, 0.28);
 }
 
-/* Five solid gold stars — a fixed decorative element (like any "Google
-   Reviews" badge's star row), not a proportional fill of the live
-   rating, so it never reads as "empty"/incomplete before the live
-   number has loaded or when it's unavailable. */
+/* Two stacked star rows: a muted track (always rendered) and a gold
+   fill clipped to a percentage width on top. While the real rating is
+   unknown (loading/unavailable) the fill is forced to 100% so the row
+   reads as five solid gold stars, never "empty" — once the real
+   rating arrives the fill shrinks to match it exactly, so a 4.3 never
+   gets rounded up to look like a perfect 5. */
 .google-rating-badge__stars {
+  position: relative;
   display: inline-flex;
-  gap: 1px;
   flex-shrink: 0;
+}
+
+.google-rating-badge__stars-track,
+.google-rating-badge__stars-fill {
+  display: flex;
+  gap: 1px;
+}
+
+.google-rating-badge__stars-track {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.google-rating-badge__stars-fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  /* A warm, professional gold rather than Google's own star color —
+     matches the site's request for a premium look here specifically. */
   color: #f5b82e;
 }
 

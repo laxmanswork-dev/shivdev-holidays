@@ -40,12 +40,16 @@ export const site = {
     youtube: '',
   },
 
-  // The exact Google Maps listing for "Shivdev holidays" in Kanyakumari
-  // (verified by following this short link's redirect: it resolves to
-  // Shivdev holidays at 8.1193381, 77.5230156). Single source of truth
-  // for the homepage's Google rating row (components/common/
-  // GoogleRatingBadge.jsx) — never hardcode this URL elsewhere.
-  googleMapsUrl: 'https://maps.app.goo.gl/bpT4mZXg55k3NQ7Z8',
+  // The business's official Google Business Profile link, as supplied.
+  // Verified (no API key needed — following each redirect, never
+  // scraped for rating data) to be the same "Shivdev holidays" entity
+  // as two earlier-supplied links: all three resolve to the identical
+  // Google Knowledge Graph feature ID /g/11zzhv6l2_ (CID
+  // 0x3b04f3fb8f01f045:0x63a6f5d7e117d5a4, 8.1193381, 77.5230156).
+  // Single source of truth for the homepage's Google rating row
+  // (components/common/GoogleRatingBadge.jsx) — never hardcode this
+  // URL elsewhere. See docs/google-rating.md.
+  googleMapsUrl: 'https://share.google/R9BVeSZjKv5uGRJl0',
 
   serviceAreas: [
     'Kanyakumari',

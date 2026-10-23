@@ -14,25 +14,41 @@ fabricated rating.
 
 ## 1. The verified business
 
-The supplied link (`https://maps.app.goo.gl/bpT4mZXg55k3NQ7Z8`) was
-followed (a plain HTTP redirect, no API key needed) and resolves to:
+Three different links have been supplied across separate requests for
+this feature:
+
+- `https://maps.app.goo.gl/bpT4mZXg55k3NQ7Z8`
+- `https://maps.app.goo.gl/CD9puqv2V3gt5zcy8`
+- `https://share.google/R9BVeSZjKv5uGRJl0`
+
+Each was followed independently (a plain HTTP redirect, no API key, no
+scraping of rating/review content — only the destination URL itself was
+read) and all three resolve to the same business:
 
 - **Name on Google:** Shivdev holidays
-- **Coordinates:** 8.1193381, 77.5230156 (Kanyakumari — matches the
-  business's address throughout the rest of the site)
-- **Resolved Maps URL:**
-  `https://www.google.com/maps/place/Shivdev+holidays/@8.1193381,77.5204407,17z/data=!3m1!4b1!4m6!3m5!1s0x3b04f3fb8f01f045:0x63a6f5d7e117d5a4!8m2!3d8.1193381!4d77.5230156!16s%2Fg%2F11zzhv6l2_`
+- **Coordinates:** 8.1193381, 77.5230156 (Kanyakumari)
 - **CID (hex):** `0x3b04f3fb8f01f045:0x63a6f5d7e117d5a4`
-- **Feature ID:** `/g/11zzhv6l2_`
+- **Google Knowledge Graph feature ID:** `/g/11zzhv6l2_` — identical
+  across all three redirects, which is the strongest available
+  confirmation without an API key that every supplied link points at
+  one single, consistent Google Business Profile, not three different
+  or similarly-named listings.
+- **Supplied address (unverified by me — see below):** Anandhapuri,
+  North St, Kottaram, Tamil Nadu 629703, India.
 
-That confirms which business this is, but it is **not** the Places API's
-own `place_id` format (`ChIJ...`) — getting that requires an API key (see
-below), so it's left for you to fill in. This keeps the identifiers above
-as a direct, independent way to double-check you've picked the right
-result in step 3.
+That confirms which business this is, but none of this is the Places
+API's own `place_id` format (`ChIJ...`) — getting that requires an API
+key (see below), so it's left for you to fill in. The identifiers above
+are a direct, independent way to double-check you've picked the right
+result in step 3. The formatted street address isn't exposed by a plain
+(non-JS, non-API) fetch of any of these links, so "Anandhapuri, North
+St, Kottaram" is recorded here as supplied, not independently confirmed
+by me — step 3's Place ID Finder result will show Google's own
+formatted address for direct comparison.
 
-The exact supplied link (`site.googleMapsUrl` in `src/data/site.js`) is
-what the badge always links to — unchanged, exactly as given.
+The most recently supplied link (`site.googleMapsUrl` in
+`src/data/site.js`) is what the badge links to — unchanged, exactly as
+given.
 
 ## 2. Create a Google Cloud project and API key
 
@@ -59,10 +75,13 @@ changed.
 
 1. Open Google's
    [Place ID Finder](https://developers.google.com/maps/documentation/places/web-service/place-id#find-id).
-2. Search **"Shivdev holidays, Kanyakumari"** (or paste the coordinates
-   from step 1: `8.1193381, 77.5230156`).
-3. Confirm the result matches the CID/feature ID above before copying its
-   Place ID (`ChIJ...`).
+2. Search **"Shivdev holidays, Anandhapuri, North St, Kottaram, Tamil
+   Nadu 629703"** (or paste the coordinates from step 1:
+   `8.1193381, 77.5230156`).
+3. Confirm the result's displayed address and coordinates match step 1
+   before copying its Place ID (`ChIJ...`) — the tool doesn't show the
+   CID/feature ID directly, so coordinates and the formatted address are
+   the cross-check here.
 
 ## 4. Configure the two values
 
@@ -117,11 +136,25 @@ is correct, expected behavior, not a bug.
   (a Cloudflare secret) and is never returned to the browser in any
   response, success or error.
 - **Frontend:** `src/components/common/GoogleRatingBadge.jsx` fetches
-  `/api/google-rating` once on mount. Three states: a brief loading
-  skeleton, the live rating once it arrives, or — if not configured, or
-  the request fails for any reason — a plain, fully functional link to
-  the same Google Maps listing with no number shown. It never displays a
-  fabricated or stale-looking value.
+  `/api/google-rating` on mount, again every 30 minutes while the tab
+  stays open, and once more if the tab regains focus after being hidden
+  for over 5 minutes. Three states: a brief loading skeleton, the live
+  rating once it arrives (stars filled in proportion to it — a 4.3
+  never rounds up to look like 5), or — if not configured, or the
+  request fails for any reason — a plain, fully functional link to the
+  same Google Maps listing with no number shown (stars stay fully gold
+  here as a fixed decorative element, since there's no rating being
+  claimed either way). It never displays a fabricated or stale-looking
+  value. None of this client-side polling adds load on Google: every
+  request still lands on the Worker's own edge cache first (above), so
+  Google is only ever re-queried once per cache window, however often
+  an open tab asks.
+- **"Write a review" link:** not added. A direct write-review deep link
+  needs the real Places `place_id` (`https://search.google.com/local/
+  writereview?placeid=ChIJ...`), which isn't available yet (see below) —
+  adding one now would mean guessing the URL, which the brief
+  specifically asked not to do. The existing Maps link already lets a
+  visitor open the listing and leave a review from there.
 
 ## Verified before this was written
 

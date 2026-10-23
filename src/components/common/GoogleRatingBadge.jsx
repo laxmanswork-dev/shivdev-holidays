@@ -10,6 +10,15 @@ import './GoogleRatingBadge.css';
 // a working link to Google Maps, just without live numbers.
 const RATING_ENDPOINT = '/api/google-rating';
 
+// How often an open tab re-asks the Worker for a fresh rating. Cheap to do
+// often: the Worker's own edge cache (src/worker/index.mjs,
+// GOOGLE_RATING_CACHE_SECONDS, 6h default) absorbs repeat requests, so this
+// interval only governs how quickly an open tab notices Google's cache
+// having rolled over — it never makes an extra call to Google itself.
+const REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+// Don't bother re-fetching on every tab focus if the last fetch was recent.
+const REVALIDATE_MIN_GAP_MS = 5 * 60 * 1000; // 5 minutes
+
 /**
  * The small "4.8 ★★★★★ (128 reviews)" row under the hero subtitle.
  * Always a complete, working link to the business's real Google Maps
@@ -20,39 +29,75 @@ const RATING_ENDPOINT = '/api/google-rating';
  *   loading     — Google icon + label + five filled stars (decorative,
  *                 not tied to a number yet) + a skeleton placeholder
  *                 where the number will appear.
- *   ready       — five filled stars, the real rating, and the real
- *                 review count, as returned by the Worker (which in
- *                 turn only ever returns Google's own live data — see
+ *   ready       — the real rating, the real review count, and the
+ *                 stars filled in proportion to that rating (so a 4.3
+ *                 reads as noticeably short of 5 full stars, never
+ *                 rounded up to look like a perfect score), as
+ *                 returned by the Worker (which in turn only ever
+ *                 returns Google's own live data — see
  *                 src/worker/index.mjs; nothing here is hardcoded).
  *   unavailable — the API isn't configured yet, or the request failed:
  *                 five filled stars, no number, no review count. Still
  *                 a full, working link — the stars are a fixed design
- *                 element, never a stand-in for an invented rating.
+ *                 element here (there's no rating to be inaccurate
+ *                 about), never a stand-in for an invented number.
+ *
+ * Refetches periodically and when the tab regains focus (see
+ * REFRESH_INTERVAL_MS / REVALIDATE_MIN_GAP_MS above) so a rating change
+ * on Google's side shows up here without a deploy — the Worker's own
+ * edge cache is what actually bounds how often Google gets asked.
  */
 export function GoogleRatingBadge() {
   const [state, setState] = useState({ status: 'loading', rating: null, userRatingCount: null });
 
   useEffect(() => {
-    const controller = new AbortController();
+    let lastFetchAt = 0;
+    let cancelled = false;
+    let controller = null;
 
-    fetch(RATING_ENDPOINT, { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : Promise.reject(new Error('bad status'))))
-      .then((data) => {
-        if (data?.ok && data.configured && typeof data.rating === 'number' && typeof data.userRatingCount === 'number') {
-          setState({ status: 'ready', rating: data.rating, userRatingCount: data.userRatingCount });
-        } else {
+    const load = () => {
+      controller?.abort();
+      controller = new AbortController();
+      lastFetchAt = Date.now();
+
+      fetch(RATING_ENDPOINT, { signal: controller.signal })
+        .then((response) => (response.ok ? response.json() : Promise.reject(new Error('bad status'))))
+        .then((data) => {
+          if (cancelled) return;
+          if (data?.ok && data.configured && typeof data.rating === 'number' && typeof data.userRatingCount === 'number') {
+            setState({ status: 'ready', rating: data.rating, userRatingCount: data.userRatingCount });
+          } else {
+            setState({ status: 'unavailable', rating: null, userRatingCount: null });
+          }
+        })
+        .catch((error) => {
+          if (cancelled || error.name === 'AbortError') return;
           setState({ status: 'unavailable', rating: null, userRatingCount: null });
-        }
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') return;
-        setState({ status: 'unavailable', rating: null, userRatingCount: null });
-      });
+        });
+    };
 
-    return () => controller.abort();
+    load();
+    const intervalId = setInterval(load, REFRESH_INTERVAL_MS);
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && Date.now() - lastFetchAt > REVALIDATE_MIN_GAP_MS) {
+        load();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    return () => {
+      cancelled = true;
+      controller?.abort();
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
   }, []);
 
   const { status, rating, userRatingCount } = state;
+  // Fully gold when there's no number to be accurate about (loading/
+  // unavailable); proportional to the real rating once it's known.
+  const fillPercent = status === 'ready' ? Math.max(0, Math.min(100, (rating / 5) * 100)) : 100;
 
   const ariaLabel =
     status === 'ready'
@@ -71,9 +116,16 @@ export function GoogleRatingBadge() {
       <GoogleGIcon className="google-rating-badge__g" />
 
       <span className="google-rating-badge__stars" aria-hidden="true">
-        {STAR_INDEXES.map((i) => (
-          <Star key={i} size={14} strokeWidth={1.75} fill="currentColor" />
-        ))}
+        <span className="google-rating-badge__stars-track">
+          {STAR_INDEXES.map((i) => (
+            <Star key={i} size={14} strokeWidth={1.75} fill="currentColor" />
+          ))}
+        </span>
+        <span className="google-rating-badge__stars-fill" style={{ width: `${fillPercent}%` }}>
+          {STAR_INDEXES.map((i) => (
+            <Star key={i} size={14} strokeWidth={1.75} fill="currentColor" />
+          ))}
+        </span>
       </span>
 
       {status === 'ready' && (
