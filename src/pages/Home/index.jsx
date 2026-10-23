@@ -251,6 +251,7 @@ export default function Home() {
       <Section
         id="map"
         background="default"
+        horizontal="center"
         aria-labelledby="map-heading"
         className="map-section"
         contentClassName="map-content"
