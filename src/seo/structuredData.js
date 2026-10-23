@@ -32,10 +32,18 @@ export function localBusinessSchema() {
     email: site.contact.email,
     address: {
       '@type': 'PostalAddress',
+      streetAddress: site.address.line1,
       addressLocality: site.address.city,
       addressRegion: site.address.state,
+      postalCode: site.address.postalCode,
       addressCountry: site.address.country,
     },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: site.address.latitude,
+      longitude: site.address.longitude,
+    },
+    hasMap: site.googleMapsUrl,
   };
 }
 

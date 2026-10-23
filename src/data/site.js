@@ -27,11 +27,20 @@ export const site = {
   },
 
   address: {
-    line1: 'Kanyakumari',
+    line1: 'Anandhapuri, North St, Kottaram',
     city: 'Kanyakumari',
     state: 'Tamil Nadu',
     country: 'India',
-    postalCode: '',
+    postalCode: '629703',
+    // Same verified location as site.googleMapsUrl / GoogleRatingBadge
+    // (see docs/google-rating.md) — the coordinates given there
+    // (8.1193381, 77.5230156) and the DMS coordinates supplied
+    // separately (8°07'09.6"N 77°31'22.9"E = 8.119333, 77.523028)
+    // agree to within ~1.5m, confirming the same business. Used in
+    // the LocalBusiness structured data's `geo` field (see
+    // src/seo/structuredData.js) for local SEO.
+    latitude: 8.1193381,
+    longitude: 77.5230156,
   },
 
   social: {
